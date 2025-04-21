@@ -240,8 +240,8 @@ function getAncestorPath(nodeId) {
 }
 
 // Creates the vis.js Network instance with only visible nodes
-function initializeNetwork() {
-	const data = { nodes, edges };
+function initializeNetwork(initialNodes, initialEdges) {
+	const data = { nodes: initialNodes, edges: initialEdges };
 	network = new vis.Network(container, data, options);
 
 	// Basic stabilized event logging
@@ -442,9 +442,11 @@ async function loadEmotionData() {
 		// Cache current language translations
 		translationCache[currentLanguage] = allEmotionData;
 
+		// Build the full DataSets first (needed for lookups)
 		buildDataSets();
 
 		// Initialize visible nodes with root and its direct children
+		visibleNodeIds = new Set(); // Reset visibleNodeIds
 		const rootNode = allEmotionData.find(e => e.parentId === null);
 		if (rootNode) {
 			console.log("Initializing with root node and direct children");
@@ -456,20 +458,38 @@ async function loadEmotionData() {
 			});
 		}
 
-		// Initialize the network
-		initializeNetwork();
+		// Create initial DataSets for the network with only visible nodes/edges
+		const initialVisibleNodes = new vis.DataSet();
+		const initialVisibleEdges = new vis.DataSet();
+
+		nodes.forEach(node => {
+			if (visibleNodeIds.has(node.id)) {
+				initialVisibleNodes.add({ ...node });
+			}
+		});
+
+		edges.forEach(edge => {
+			if (visibleNodeIds.has(edge.from) && visibleNodeIds.has(edge.to)) {
+				initialVisibleEdges.add(edge);
+			}
+		});
+
+		// Initialize the network with only the visible data
+		initializeNetwork(initialVisibleNodes, initialVisibleEdges); // Pass filtered data
 		setupEventListeners();
+		applyAllNodeStyles(); // Apply styles immediately
 
 		// Add reset instructions
 		updateResetInstructions();
 
-		// Rebuild the network to apply visibility (with animation for initial view)
-		setTimeout(() => {
-			rebuildNetworkWithVisibleNodes(true);
+		// Preload other language translations in the background
+		preloadTranslations();
 
-			// Preload other language translations in the background
-			preloadTranslations();
-		}, 500);
+		// No need for delayed rebuild anymore
+		// setTimeout(() => {
+		// 	rebuildNetworkWithVisibleNodes(true);
+		// 	preloadTranslations();
+		// }, 500);
 
 	} catch (error) {
 		console.error("Error loading or processing emotion data:", error);
@@ -1042,7 +1062,6 @@ function nextTourEmotion() {
 	console.log(`Tour stack has ${tourStack.length} nodes remaining`);
 	const nextNodeId = tourStack.pop();
 	console.log(`Next node in tour: ${nextNodeId}`);
-
 	// Make sure the node is visible or will be visible
 	if (!visibleNodeIds.has(nextNodeId)) {
 		console.log(`Node ${nextNodeId} is not visible, adding to visible set`);
@@ -1182,9 +1201,7 @@ function filterToFeltEmotions() {
 
 	// Rebuild the network with visible nodes (no animation)
 	rebuildNetworkWithVisibleNodes(false);
-}
-
-// Resets the view to show all emotions, respecting initial collapse states
+}// Resets the view to show all emotions, respecting initial collapse states
 function showAllEmotions() {
 	isFiltered = false;
 	filterBtn.textContent = "Show My Emotions";
@@ -1289,4 +1306,6 @@ function buildDataSetsWithSavedStates(savedStates = {}) {
 
 
 // --- Initialization ---
-document.addEventListener('DOMContentLoaded', loadEmotionData); 
+document.addEventListener('DOMContentLoaded', loadEmotionData);
+
+
