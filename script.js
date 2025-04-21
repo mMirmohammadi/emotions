@@ -12,6 +12,7 @@ const panelSaveNoteBtn = document.getElementById('panel-save-note-btn');
 const panelNextBtn = document.getElementById('panel-next-btn');
 const tourBtn = document.getElementById('tour-btn');
 const filterBtn = document.getElementById('filter-btn');
+const languageBtn = document.getElementById('language-btn');
 
 // --- Global State Variables ---
 let network = null;
@@ -24,6 +25,8 @@ let tourStack = [];
 let currentTourNodeId = null; // This seems potentially unused now? Review later.
 let isFiltered = false;
 let visibleNodeIds = new Set();
+let currentLanguage = 'en'; // Default language is English
+let translationCache = {}; // Cache for translations to avoid unnecessary network requests
 
 // --- Network Configuration ---
 const options = {
@@ -287,7 +290,7 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 	// Add visible nodes to the new DataSet
 	nodes.forEach(node => {
 		if (visibleNodeIds.has(node.id)) {
-			visibleNodes.add(node);
+			visibleNodes.add({ ...node, font: { size: 14, multi: true, align: 'left' } }); // Explicitly set font to force refresh
 		}
 	});
 
@@ -302,6 +305,8 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 
 	// Destroy old network and create new one
 	const networkContainer = network.body.container;
+	const currentScale = network.getScale();
+	const currentViewPosition = network.getViewPosition();
 	network.destroy();
 
 	// Create new network with visible nodes only
@@ -314,6 +319,9 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 		console.log("Rebuilt network stabilized");
 		// Apply styles after stabilization to ensure selection is visible
 		applyAllNodeStyles();
+
+		// Force an extra redraw for good measure
+		network.redraw();
 	});
 
 	// Apply selection styles immediately - don't wait for stabilization
@@ -322,7 +330,7 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 	// Focus back on the previously selected node
 	if (selectedNodeId && visibleNodeIds.has(selectedNodeId)) {
 		network.focus(selectedNodeId, {
-			scale: 1.0,
+			scale: currentScale,
 			animation: false
 		});
 
@@ -338,12 +346,28 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 			applyAllNodeStyles();
 		}
 	} else {
-		// If there's no selected node, just fit the view
-		console.log("Fitting network to view (no selected node)");
-		network.fit({
-			animation: false
-		});
+		// If there's no selected node, just restore the previous view
+		if (currentViewPosition) {
+			network.moveTo({
+				position: currentViewPosition,
+				scale: currentScale,
+				animation: false
+			});
+		} else {
+			// Or fit the view if no position was saved
+			console.log("Fitting network to view (no selected node)");
+			network.fit({
+				animation: false
+			});
+		}
 	}
+
+	// Force one additional redraw to ensure labels are updated
+	setTimeout(() => {
+		if (network) {
+			network.redraw();
+		}
+	}, 100);
 }
 
 // Sets up all event listeners for the network and UI elements
@@ -366,16 +390,57 @@ function setupEventListeners() {
 	// Control events
 	tourBtn.addEventListener('click', toggleTour);
 	filterBtn.addEventListener('click', toggleFilterMyEmotions);
+	languageBtn.addEventListener('click', switchLanguage);
+
+	// Handle keyboard navigation in tour mode
+	document.addEventListener('keydown', function (event) {
+		if (isTourActive && event.code === 'Space') {
+			event.preventDefault();
+			if (!panelNextBtn.disabled) {
+				nextTourEmotion();
+			}
+		} else if (event.code === 'Escape') {
+			hidePanel();
+			if (isTourActive) {
+				endTour();
+			}
+		}
+	});
+}
+
+// Preload translations for better performance
+async function preloadTranslations() {
+	try {
+		// Preload English and Persian translations if not already cached
+		for (const lang of ['en', 'fa']) {
+			if (!translationCache[lang]) {
+				const dataFile = lang === 'en' ? 'emotions.json' : 'emotions_persian.json';
+				console.log(`Preloading translations from ${dataFile}`);
+				const response = await fetch(dataFile);
+				if (response.ok) {
+					const translatedData = await response.json();
+					translationCache[lang] = translatedData;
+					console.log(`Successfully preloaded translations for ${lang}`);
+				}
+			}
+		}
+	} catch (error) {
+		console.error("Error preloading translations:", error);
+	}
 }
 
 // Fetches data and initializes the application
 async function loadEmotionData() {
 	try {
-		const response = await fetch('emotions.json');
+		const dataFile = currentLanguage === 'en' ? 'emotions.json' : 'emotions_persian.json';
+		const response = await fetch(dataFile);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 		allEmotionData = await response.json();
+
+		// Cache current language translations
+		translationCache[currentLanguage] = allEmotionData;
 
 		buildDataSets();
 
@@ -396,21 +461,14 @@ async function loadEmotionData() {
 		setupEventListeners();
 
 		// Add reset instructions
-		const instructionsDiv = document.createElement('div');
-		instructionsDiv.id = 'reset-instructions';
-		instructionsDiv.innerHTML = '<p>Note: To reset all emotions and notes, simply reload the page.</p>';
-		instructionsDiv.style.position = 'fixed';
-		instructionsDiv.style.bottom = '10px';
-		instructionsDiv.style.left = '10px';
-		instructionsDiv.style.background = 'rgba(255, 255, 255, 0.8)';
-		instructionsDiv.style.padding = '5px 10px';
-		instructionsDiv.style.borderRadius = '5px';
-		instructionsDiv.style.fontSize = '12px';
-		document.body.appendChild(instructionsDiv);
+		updateResetInstructions();
 
 		// Rebuild the network to apply visibility (with animation for initial view)
 		setTimeout(() => {
 			rebuildNetworkWithVisibleNodes(true);
+
+			// Preload other language translations in the background
+			preloadTranslations();
 		}, 500);
 
 	} catch (error) {
@@ -419,6 +477,256 @@ async function loadEmotionData() {
 	}
 }
 
+// Adds or updates reset instructions with appropriate language
+function updateResetInstructions() {
+	let instructionsDiv = document.getElementById('reset-instructions');
+
+	if (!instructionsDiv) {
+		instructionsDiv = document.createElement('div');
+		instructionsDiv.id = 'reset-instructions';
+		instructionsDiv.style.position = 'fixed';
+		instructionsDiv.style.bottom = '10px';
+		instructionsDiv.style.left = '10px';
+		instructionsDiv.style.background = 'rgba(255, 255, 255, 0.8)';
+		instructionsDiv.style.padding = '5px 10px';
+		instructionsDiv.style.borderRadius = '5px';
+		instructionsDiv.style.fontSize = '12px';
+		document.body.appendChild(instructionsDiv);
+	}
+
+	if (currentLanguage === 'en') {
+		instructionsDiv.innerHTML = '<p>Note: To reset all emotions and notes, simply reload the page.</p>';
+	} else {
+		instructionsDiv.innerHTML = '<p>توجه: برای بازنشانی تمام احساسات و یادداشت‌ها، صفحه را دوباره بارگیری کنید.</p>';
+	}
+}
+
+// Handles language switching
+function switchLanguage() {
+	// Save current state
+	const wasInTourMode = isTourActive;
+	const previousSelectedNodeId = currentSelectedNodeId;
+	const hadPanel = !emotionPanel.classList.contains('hidden');
+
+	// Save camera position and scale
+	let cameraPosition = null;
+	if (network) {
+		cameraPosition = network.getViewPosition();
+		console.log(`Saving camera position: `, cameraPosition);
+	}
+
+	// Save node states
+	const savedNodeStates = {};
+	nodes.forEach(node => {
+		savedNodeStates[node.id] = {
+			_feltState: node._feltState,
+			_notes: node._notes,
+			_childrenHidden: node._childrenHidden
+		};
+	});
+
+	// Save visible nodes
+	const savedVisibleNodeIds = new Set(visibleNodeIds);
+
+	// Save node state if we had one selected
+	let previousNodeData = null;
+	if (previousSelectedNodeId) {
+		previousNodeData = nodes.get(previousSelectedNodeId);
+	}
+
+	// Toggle language
+	currentLanguage = currentLanguage === 'en' ? 'fa' : 'en';
+	console.log(`Switching to language: ${currentLanguage}`);
+
+	// Update language button text and UI elements
+	updateUILanguage(wasInTourMode);
+
+	// Keep the panel hidden while updating
+	const wasPanelHidden = emotionPanel.classList.contains('hidden');
+	emotionPanel.classList.add('hidden');
+
+	// Load the translated data and update labels without recreating the network
+	updateLabelsWithNewLanguage(savedNodeStates, savedVisibleNodeIds, cameraPosition, previousSelectedNodeId, hadPanel, wasInTourMode);
+}
+
+// Updates all UI text elements based on the selected language
+function updateUILanguage(wasInTourMode) {
+	if (currentLanguage === 'en') {
+		languageBtn.textContent = 'فارسی';
+		document.documentElement.lang = 'en';
+		document.querySelector('h1').textContent = 'Emotion Mind Map';
+		tourBtn.textContent = wasInTourMode ? 'End Tour' : 'Start Guided Tour';
+		filterBtn.textContent = 'Show My Emotions';
+		document.querySelector('.feel-question').textContent = 'Do you feel this?';
+		panelFeelYesBtn.textContent = 'Yes';
+		panelFeelNoBtn.textContent = 'No';
+		document.querySelector('label[for="panel-notes-area"]').textContent = 'My Notes:';
+		panelSaveNoteBtn.textContent = 'Save Note';
+		panelNextBtn.textContent = 'Next Emotion';
+	} else {
+		languageBtn.textContent = 'English';
+		document.documentElement.lang = 'fa';
+		document.querySelector('h1').textContent = 'نقشه ذهنی احساسات';
+		tourBtn.textContent = wasInTourMode ? 'پایان تور' : 'شروع تور راهنما';
+		filterBtn.textContent = 'نمایش احساسات من';
+		document.querySelector('.feel-question').textContent = 'آیا این را احساس می‌کنید؟';
+		panelFeelYesBtn.textContent = 'بله';
+		panelFeelNoBtn.textContent = 'خیر';
+		document.querySelector('label[for="panel-notes-area"]').textContent = 'یادداشت‌های من:';
+		panelSaveNoteBtn.textContent = 'ذخیره یادداشت';
+		panelNextBtn.textContent = 'احساس بعدی';
+	}
+
+	// Update reset instructions
+	updateResetInstructions();
+}
+
+// Helper function to force network to redraw all nodes with updated labels
+function forceNetworkRedraw() {
+	if (!network) return;
+
+	console.log("Forcing complete network redraw...");
+
+	// First directly call redraw
+	network.redraw();
+
+	// Then use a trick to force a complete redraw by slightly tweaking the scale
+	const currentScale = network.getScale();
+
+	// Zoom in very slightly (imperceptible to user)
+	network.moveTo({
+		scale: currentScale * 1.001,
+		animation: false
+	});
+
+	// Then immediately back to original scale
+	setTimeout(() => {
+		network.moveTo({
+			scale: currentScale,
+			animation: false
+		});
+	}, 50);
+}
+
+// Updates all node labels with new text without changing structure
+function updateNodeLabels(translationMap, savedNodeStates) {
+	// Update all node labels and descriptions without changing structure
+	const nodesToUpdate = [];
+	nodes.forEach(node => {
+		const translation = translationMap[node.id];
+		if (translation) {
+			// Keep all node properties except update label and description
+			nodesToUpdate.push({
+				id: node.id,
+				label: translation.label,
+				description: translation.description,
+				// Preserve previous states
+				_feltState: savedNodeStates[node.id]?._feltState,
+				_notes: savedNodeStates[node.id]?._notes,
+				_childrenHidden: savedNodeStates[node.id]?._childrenHidden
+			});
+		}
+	});
+
+	// Update the nodes with new text
+	if (nodesToUpdate.length > 0) {
+		console.log(`Updating ${nodesToUpdate.length} nodes with translated text`);
+		nodes.update(nodesToUpdate);
+	}
+
+	return nodesToUpdate.length;
+}
+
+// Loads translated data and updates node labels without recreating the network
+async function updateLabelsWithNewLanguage(savedNodeStates, savedVisibleNodeIds, cameraPosition, previousSelectedNodeId, hadPanel, wasInTourMode) {
+	try {
+		// Check if translations are already in cache
+		if (!translationCache[currentLanguage]) {
+			// Load the translated JSON data
+			const dataFile = currentLanguage === 'en' ? 'emotions.json' : 'emotions_persian.json';
+			console.log(`Loading translations from ${dataFile}`);
+			const response = await fetch(dataFile);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			const translatedData = await response.json();
+			// Cache the translations
+			translationCache[currentLanguage] = translatedData;
+			console.log(`Cached translations for ${currentLanguage}`);
+		} else {
+			console.log(`Using cached translations for ${currentLanguage}`);
+		}
+
+		// Get translations from cache
+		const translatedData = translationCache[currentLanguage];
+
+		// Update allEmotionData with translated content
+		allEmotionData = translatedData;
+
+		// Create a map of id -> translated data for quick lookup
+		const translationMap = {};
+		translatedData.forEach(item => {
+			translationMap[item.id] = item;
+		});
+
+		// Update all node labels
+		const updatedCount = updateNodeLabels(translationMap, savedNodeStates);
+
+		if (updatedCount > 0) {
+			console.log(`Updated ${updatedCount} node labels`);
+		}
+
+		// Restore visible nodes
+		visibleNodeIds = new Set(savedVisibleNodeIds);
+
+		// Apply styles first
+		applyAllNodeStyles();
+
+		// Force complete network redraw to update labels
+		forceNetworkRedraw();
+
+		// After redraw, do a full rebuild to ensure visibility is correct
+		setTimeout(() => {
+			// Rebuild network with visible nodes
+			rebuildNetworkWithVisibleNodes(false);
+
+			// Restore camera position
+			if (network && cameraPosition) {
+				console.log(`Restoring camera position: `, cameraPosition);
+				network.moveTo({
+					position: cameraPosition,
+					animation: false
+				});
+			}
+
+			// If a node was selected, restore its selection
+			if (previousSelectedNodeId && hadPanel) {
+				currentSelectedNodeId = previousSelectedNodeId;
+
+				// Show panel for selected node
+				showPanelForNode(previousSelectedNodeId);
+
+				// If we were in tour mode, update the Next button accordingly
+				if (wasInTourMode) {
+					isTourActive = true;
+					panelNextBtn.classList.remove('hidden');
+					const nodeData = nodes.get(previousSelectedNodeId);
+					if (nodeData) {
+						// Important: In Persian version, ensure we never disable the Next button for true state
+						if (currentLanguage === 'fa' && nodeData._feltState === true) {
+							panelNextBtn.disabled = false;
+						} else {
+							panelNextBtn.disabled = nodeData._feltState === null;
+						}
+					}
+				}
+			}
+		}, 100);
+
+	} catch (error) {
+		console.error("Error updating node labels:", error);
+	}
+}
 
 // --- Network Interaction Handlers ---
 
@@ -468,17 +776,36 @@ function showPanelForNode(nodeId) {
 		panelFeelYesBtn.classList.toggle('selected-feel', nodeData._feltState === true);
 		panelFeelNoBtn.classList.toggle('selected-feel', nodeData._feltState === false);
 
+		console.log(`Showing panel for node ${nodeId}, tour active: ${isTourActive}, felt state: ${nodeData._feltState}`);
+
 		if (isTourActive) {
+			// In tour mode, hide toggle children and show next emotion button
 			panelToggleChildrenBtn.style.display = 'none';
 			panelNextBtn.classList.remove('hidden');
-			panelNextBtn.disabled = nodeData._feltState === null; // Disable if no decision made
+
+			// Important: In Persian version, ensure we never disable the Next button for true state
+			if (currentLanguage === 'fa' && nodeData._feltState === true) {
+				panelNextBtn.disabled = false;
+				console.log(`Persian tour mode: Ensuring Next button is enabled for felt=true state`);
+			} else {
+				panelNextBtn.disabled = nodeData._feltState === null;
+			}
+
+			console.log(`Tour mode: Next button disabled: ${panelNextBtn.disabled}, hidden: ${panelNextBtn.classList.contains('hidden')}`);
 		} else {
+			// Not in tour mode, hide next button and show toggle children if applicable
 			panelNextBtn.classList.add('hidden');
 			panelNextBtn.disabled = false;
+
 			const children = allEmotionData.filter(e => e.parentId === nodeId);
 			panelToggleChildrenBtn.style.display = children.length > 0 ? 'inline-block' : 'none';
+
 			if (children.length > 0) {
-				panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "Show Children" : "Hide Children";
+				if (currentLanguage === 'en') {
+					panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "Show Children" : "Hide Children";
+				} else {
+					panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "نمایش فرزندان" : "پنهان کردن فرزندان";
+				}
 			}
 		}
 
@@ -529,8 +856,16 @@ function handleFeelDecision(isFelt) {
 
 	console.log(`Feel decision for node ${currentSelectedNodeId}: ${isFelt}`);
 
-	// Toggle the felt state - if already in this state, clear it
-	const newState = (node._feltState === isFelt) ? null : isFelt;
+	// In tour mode, prevent toggling back to null to avoid disabling the Next button
+	let newState;
+	if (isTourActive && node._feltState === isFelt) {
+		// Keep the current state instead of toggling to null
+		newState = isFelt;
+		console.log(`Tour mode: preventing toggle to null, keeping felt state: ${newState}`);
+	} else {
+		// Normal toggle behavior
+		newState = (node._feltState === isFelt) ? null : isFelt;
+	}
 
 	// Update the node's felt state
 	nodes.update({
@@ -559,7 +894,10 @@ function handleFeelDecision(isFelt) {
 
 	// Update tour button state if in tour mode
 	if (isTourActive) {
+		console.log(`Tour is active, updating Next button state. Current felt state: ${newState}`);
 		panelNextBtn.disabled = newState === null;
+		panelNextBtn.classList.remove('hidden');
+		console.log(`Next button is now: ${panelNextBtn.disabled ? 'disabled' : 'enabled'}, hidden: ${panelNextBtn.classList.contains('hidden')}`);
 	}
 
 	console.log(`Node ${currentSelectedNodeId} felt state set to: ${newState}`);
@@ -647,7 +985,7 @@ function toggleTour() {
 // Starts the guided tour
 function startTour() {
 	isTourActive = true;
-	tourBtn.textContent = "End Tour";
+	tourBtn.textContent = currentLanguage === 'en' ? "End Tour" : "پایان تور";
 	tourStack = [];
 
 	const rootNode = allEmotionData.find(e => e.parentId === null);
@@ -662,8 +1000,12 @@ function startTour() {
 		const firstNodeId = tourStack.pop();
 		const nodeData = nodes.get(firstNodeId);
 		if (nodeData) {
-			network.focus(firstNodeId, { scale: 1.0, animation: true });
-			showPanelForNode(firstNodeId);
+			// Make sure the node is visible
+			visibleNodeIds.add(firstNodeId);
+			if (network) {
+				network.focus(firstNodeId, { scale: 1.0, animation: true });
+				showPanelForNode(firstNodeId);
+			}
 		} else {
 			console.warn("First tour node not found:", firstNodeId);
 			endTour();
@@ -671,11 +1013,13 @@ function startTour() {
 	} else {
 		endTour();
 	}
-	console.log("Tour started");
+	console.log("Tour started with language:", currentLanguage);
 }
 
 // Moves to the next emotion in the tour based on user decisions
 function nextTourEmotion() {
+	console.log(`nextTourEmotion called, language: ${currentLanguage}, current node: ${currentSelectedNodeId}`);
+
 	if (currentSelectedNodeId) {
 		const previousNodeData = nodes.get(currentSelectedNodeId);
 		if (previousNodeData && previousNodeData._feltState !== false) {
@@ -683,7 +1027,7 @@ function nextTourEmotion() {
 			for (let i = children.length - 1; i >= 0; i--) {
 				tourStack.push(children[i]);
 			}
-			console.log(`Added children of ${currentSelectedNodeId} to stack.`);
+			console.log(`Added ${children.length} children of ${currentSelectedNodeId} to stack.`);
 		} else {
 			console.log(`Pruning children of ${currentSelectedNodeId} because state is ${previousNodeData?._feltState}.`);
 		}
@@ -695,10 +1039,13 @@ function nextTourEmotion() {
 		return;
 	}
 
+	console.log(`Tour stack has ${tourStack.length} nodes remaining`);
 	const nextNodeId = tourStack.pop();
+	console.log(`Next node in tour: ${nextNodeId}`);
 
 	// Make sure the node is visible or will be visible
 	if (!visibleNodeIds.has(nextNodeId)) {
+		console.log(`Node ${nextNodeId} is not visible, adding to visible set`);
 		// Add this node to visible set
 		visibleNodeIds.add(nextNodeId);
 
@@ -709,6 +1056,7 @@ function nextTourEmotion() {
 			const parentNode = nodes.get(parentId);
 			if (parentNode && parentNode._childrenHidden) {
 				// Expand the parent without animation
+				console.log(`Expanding parent node ${parentId} of ${nextNodeId}`);
 				nodes.update({
 					id: parentId,
 					_childrenHidden: false
@@ -725,13 +1073,14 @@ function nextTourEmotion() {
 
 	const nextNodeData = nodes.get(nextNodeId);
 	if (!nextNodeData) {
-		console.warn("Node not found in tour stack:", nextNodeId, "continuing tour.");
+		console.warn(`Node not found in tour stack: ${nextNodeId}, continuing tour.`);
 		currentSelectedNodeId = null;
 		nextTourEmotion();
 		return;
 	}
 
 	// Now focus with animation
+	console.log(`Focusing on node ${nextNodeId} for tour`);
 	network.focus(nextNodeId, {
 		scale: 1.0,
 		animation: {
@@ -739,13 +1088,22 @@ function nextTourEmotion() {
 			easingFunction: 'easeInOutQuad'
 		}
 	});
+
 	showPanelForNode(nextNodeId);
+
+	// For Persian version, force enable the Next button if needed
+	if (currentLanguage === 'fa' && nextNodeData._feltState === true) {
+		setTimeout(() => {
+			panelNextBtn.disabled = false;
+			console.log("Persian mode: Ensuring Next button is enabled after panel show");
+		}, 50);
+	}
 }
 
 // Ends the guided tour
 function endTour() {
 	isTourActive = false;
-	tourBtn.textContent = "Start Guided Tour";
+	tourBtn.textContent = currentLanguage === 'en' ? "Start Guided Tour" : "شروع تور راهنما";
 	tourStack = [];
 
 	// Only update UI elements without modifying node data
@@ -756,7 +1114,11 @@ function endTour() {
 			const children = allEmotionData.filter(e => e.parentId === currentSelectedNodeId);
 			panelToggleChildrenBtn.style.display = children.length > 0 ? 'inline-block' : 'none';
 			if (children.length > 0) {
-				panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "Show Children" : "Hide Children";
+				if (currentLanguage === 'en') {
+					panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "Show Children" : "Hide Children";
+				} else {
+					panelToggleChildrenBtn.textContent = nodeData._childrenHidden ? "نمایش فرزندان" : "پنهان کردن فرزندان";
+				}
 			}
 		}
 	}

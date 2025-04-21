@@ -294,3 +294,52 @@ button:disabled {
 }
 
 /* Basic styles will go here */
+
+/* Add styles for the language button */
+#language-btn {
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	padding: 5px 15px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+#language-btn:hover {
+	background-color: #45a049;
+}
+
+/* RTL text direction for Persian language */
+html[lang="fa"] {
+	direction: rtl;
+}
+
+html[lang="fa"] body {
+	font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+html[lang="fa"] .controls {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+html[lang="fa"] button {
+	font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+html[lang="fa"] #emotion-panel {
+	left: auto;
+	right: 20px;
+}
+
+html[lang="fa"] #panel-close-btn {
+	right: auto;
+	left: 10px;
+}
+
+html[lang="fa"] #reset-instructions {
+	left: auto;
+	right: 10px;
+}
