@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Basic styles for Emotion Mind Map */
+
+body {
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	/* Remove margin */
+	background-color: #f8f9fa;
+	min-height: 100vh;
+	overflow: hidden;
+	/* Prevent body scrollbars */
+	color: #343a40;
+}
+
+h1 {
+	color: #343a40;
+	position: absolute;
+	/* Position over the map */
+	top: 15px;
+	left: 15px;
+	z-index: 10;
+	/* Above map, below panel */
+	background-color: rgba(255, 255, 255, 0.85);
+	padding: 8px 12px;
+	border-radius: 6px;
+	margin: 0;
+	font-size: 1.5em;
+	font-weight: 500;
+}
+
+#mindmap {
+	width: 100vw;
+	/* Full viewport width */
+	height: 100vh;
+	/* Full viewport height */
+	border: none;
+	/* Remove border */
+	background-color: #ffffff;
+	position: absolute;
+	/* Ensure it covers body */
+	top: 0;
+	left: 0;
+}
+
+#description {
+	width: 80%;
+	padding: 15px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	min-height: 100px;
+}
+
+#description h2 {
+	margin-top: 0;
+	color: #555;
+}
+
+/* Emotion Panel Styles */
+.panel {
+	position: fixed;
+	/* Remove centering styles */
+	top: 20px;
+	/* Position from top */
+	right: 20px;
+	/* Position from right */
+	width: 360px;
+	/* Adjusted width slightly */
+	max-width: 90%;
+	max-height: calc(100vh - 40px);
+	/* Max height considering padding */
+	background-color: white;
+	border: none;
+	border-radius: 10px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+	padding: 25px;
+	z-index: 1000;
+	/* Ensure it's above the network */
+	overflow-y: auto;
+	/* Allow scrolling if content overflows */
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.panel.hidden {
+	display: block;
+	opacity: 0;
+	transform: translateX(20px);
+	pointer-events: none;
+}
+
+#panel-close-btn {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	background: transparent;
+	border: none;
+	font-size: 1.4em;
+	cursor: pointer;
+	color: #adb5bd;
+	padding: 5px;
+	line-height: 1;
+}
+
+#panel-close-btn:hover {
+	color: #495057;
+}
+
+#panel-title {
+	margin-top: 0;
+	margin-bottom: 15px;
+	color: #212529;
+	font-size: 1.4em;
+	font-weight: 600;
+}
+
+#panel-description {
+	margin-bottom: 20px;
+	color: #495057;
+	line-height: 1.6;
+}
+
+.panel hr {
+	border: none;
+	border-top: 1px solid #dee2e6;
+	margin: 20px 0;
+}
+
+.panel-actions,
+.panel-notes {
+	margin-top: 15px;
+}
+
+/* --- Refined Panel Actions Styling --- */
+.panel-actions {
+	display: flex;
+	flex-wrap: wrap;
+	/* Allow items to wrap */
+	align-items: center;
+	/* Vertically align items */
+	gap: 10px;
+	/* Space between items/rows */
+	justify-content: space-between;
+	/* Distribute space */
+}
+
+.feel-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	/* Space within the feel group */
+	/* Removed margin-left from feel-question, handled by gap */
+}
+
+.panel-actions button {
+	/* Reduce excessive margins from general button style if needed */
+	margin: 0;
+	/* Reset margin, rely on gap */
+}
+
+/* Adjust feel buttons specifically */
+#panel-feel-yes-btn,
+#panel-feel-no-btn {
+	padding: 8px 15px;
+	/* Slightly smaller padding */
+	min-width: 60px;
+	/* Ensure minimum width */
+	text-align: center;
+}
+
+/* --- End Refined Panel Actions Styling --- */
+
+/* General Button Styling */
+button {
+	padding: 10px 18px;
+	margin: 5px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	background-color: #e9ecef;
+	color: #343a40;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95em;
+	transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+	text-align: center;
+}
+
+button:hover {
+	background-color: #dee2e6;
+	border-color: #ced4da;
+}
+
+button:disabled {
+	background-color: #f8f9fa;
+	color: #adb5bd;
+	cursor: not-allowed;
+	border-color: #e9ecef;
+}
+
+/* Specific Button Groups */
+.panel-actions button,
+.panel-notes button,
+.controls button {
+	margin-right: 8px;
+	margin-bottom: 8px;
+}
+
+/* Special Button Styles */
+#panel-save-note-btn,
+#panel-next-btn {
+	background-color: #007bff;
+	color: white;
+	border-color: #007bff;
+}
+
+#panel-save-note-btn:hover,
+#panel-next-btn:hover {
+	background-color: #0056b3;
+	border-color: #0056b3;
+}
+
+/* Highlight for selected feel button */
+.panel-actions button.selected-feel {
+	background-color: #6c757d;
+	border-color: #5a6268;
+	color: white;
+	font-weight: 500;
+	box-shadow: 0 0 0 2px rgba(108, 117, 125, 0.3);
+	margin-bottom: 8px;
+}
+
+.feel-question {
+	margin-left: 15px;
+	margin-right: 5px;
+	font-style: normal;
+	color: #495057;
+	font-weight: 500;
+	display: inline-block;
+	margin-bottom: 8px;
+}
+
+.panel-notes label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: 500;
+	color: #343a40;
+}
+
+.panel-notes textarea {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	border: 1px solid #ced4da;
+	border-radius: 6px;
+	resize: vertical;
+	margin-bottom: 10px;
+	font-family: 'Poppins', sans-serif;
+	font-size: 0.95em;
+	color: #495057;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.panel-notes textarea:focus {
+	outline: none;
+	border-color: #80bdff;
+	box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Style for node marked as 'felt' */
+/* Removed invalid rule */
+
+/* Style for node marked as 'not felt' */
+/* Removed invalid rule */
+
+/* Controls Styles */
+.controls {
+	position: absolute;
+	top: 15px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+	background-color: rgba(255, 255, 255, 0.9);
+	padding: 10px 15px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	display: flex;
+	gap: 10px;
+}
+
+/* Style to hide elements */
+.hidden {
+	display: none !important;
+}
+
+/* Basic styles will go here */

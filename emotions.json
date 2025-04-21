@@ -1,0 +1,1562 @@
+[
+	{
+		"id": 1,
+		"label": "Emotions",
+		"description": "The central concept of all feelings.",
+		"parentId": null
+	},
+	{
+		"id": 2,
+		"label": "Negative Emotions",
+		"description": "Emotions generally perceived as unpleasant.",
+		"parentId": 1
+	},
+	{
+		"id": 3,
+		"label": "Positive Emotions",
+		"description": "Emotions generally perceived as pleasant.",
+		"parentId": 1
+	},
+	{
+		"id": 4,
+		"label": "Sad",
+		"description": "A general feeling of unhappiness or sorrow, often due to loss, disappointment, or pain.",
+		"parentId": 2
+	},
+	{
+		"id": 5,
+		"label": "Dislike",
+		"description": "A general feeling of aversion or disapproval toward someone or something, often driven by negative emotions like contempt, disgust, or distrust.",
+		"parentId": 2
+	},
+	{
+		"id": 6,
+		"label": "Alone",
+		"description": "Feeling separated from others, either physically or emotionally, often accompanied by sadness, vulnerability, or isolation.",
+		"parentId": 2
+	},
+	{
+		"id": 7,
+		"label": "Angry",
+		"description": "A strong emotion of displeasure or frustration, often in response to feeling wronged, provoked, or powerless.",
+		"parentId": 2
+	},
+	{
+		"id": 8,
+		"label": "Embarrassed",
+		"description": "A feeling of discomfort or self-consciousness caused by shame, guilt, or awkwardness, often in front of others.",
+		"parentId": 2
+	},
+	{
+		"id": 9,
+		"label": "Afraid",
+		"description": "Feeling fear, uneasiness, or concern, often due to a perceived threat or uncertainty.",
+		"parentId": 2
+	},
+	{
+		"id": 10,
+		"label": "Confident",
+		"description": "Feeling self-assured and secure in your abilities, decisions, or beliefs, often accompanied by optimism and a positive outlook.",
+		"parentId": 3
+	},
+	{
+		"id": 11,
+		"label": "Interested",
+		"description": "Feeling eager or engaged with something or someone, showing curiosity or emotional connection.",
+		"parentId": 3
+	},
+	{
+		"id": 12,
+		"label": "Excited",
+		"description": "A heightened state of enthusiasm, energy, or anticipation, often in response to something thrilling or unexpected.",
+		"parentId": 3
+	},
+	{
+		"id": 13,
+		"label": "Loving",
+		"description": "Feeling a deep sense of affection, care, or kindness toward others, often accompanied by generosity and warmth.",
+		"parentId": 3
+	},
+	{
+		"id": 14,
+		"label": "Accepted",
+		"description": "Feeling recognized, welcomed, and included by others, often with a sense of belonging and value.",
+		"parentId": 3
+	},
+	{
+		"id": 15,
+		"label": "Depressed",
+		"description": "A state of deep sadness and hopelessness that feels heavy and persistent.",
+		"parentId": 4
+	},
+	{
+		"id": 16,
+		"label": "Hurt",
+		"description": "An emotional pain caused by someone's actions, words, or circumstances.",
+		"parentId": 4
+	},
+	{
+		"id": 17,
+		"label": "Bereft",
+		"description": "A profound feeling of loss or emptiness, often tied to losing someone or something important.",
+		"parentId": 4
+	},
+	{
+		"id": 18,
+		"label": "Melancholy",
+		"description": "A reflective, bittersweet sadness, often tied to memories or a sense of longing.",
+		"parentId": 4
+	},
+	{
+		"id": 19,
+		"label": "Subdued",
+		"description": "A quiet, muted sadness, where emotions feel dampened or suppressed.",
+		"parentId": 4
+	},
+	{
+		"id": 20,
+		"label": "Aggrieved",
+		"description": "A feeling of injustice or deep emotional hurt, often because you were wronged.",
+		"parentId": 4
+	},
+	{
+		"id": 21,
+		"label": "Discouraged",
+		"description": "A loss of confidence or hope, feeling like your efforts are futile.",
+		"parentId": 4
+	},
+	{
+		"id": 22,
+		"label": "Dismissive",
+		"description": "Feeling as if something or someone is unworthy of respect, attention, or consideration.",
+		"parentId": 5
+	},
+	{
+		"id": 23,
+		"label": "Disgusted",
+		"description": "A strong sense of revulsion or repulsion, usually in reaction to something unpleasant, immoral, or gross.",
+		"parentId": 5
+	},
+	{
+		"id": 24,
+		"label": "Suspicious",
+		"description": "Feeling distrust or uncertainty about someone's actions, words, or intentions.",
+		"parentId": 5
+	},
+	{
+		"id": 25,
+		"label": "Appalled",
+		"description": "A mix of shock and strong disapproval, often in response to something horrifying or offensive.",
+		"parentId": 5
+	},
+	{
+		"id": 26,
+		"label": "Repelled",
+		"description": "A strong urge to move away from something or someone due to deep aversion or disgust.",
+		"parentId": 5
+	},
+	{
+		"id": 27,
+		"label": "Skeptical",
+		"description": "Doubting or questioning the truth, validity, or sincerity of something or someone.",
+		"parentId": 5
+	},
+	{
+		"id": 28,
+		"label": "Distant",
+		"description": "Feeling emotionally far from people, as if disconnected or uninterested in engaging.",
+		"parentId": 6
+	},
+	{
+		"id": 29,
+		"label": "Lonely",
+		"description": "Feeling a deep sense of emptiness or longing for connection, often accompanied by sadness.",
+		"parentId": 6
+	},
+	{
+		"id": 30,
+		"label": "Excluded",
+		"description": "Feeling left out or purposefully ignored by others, creating a sense of being unimportant or unwanted.",
+		"parentId": 6
+	},
+	{
+		"id": 31,
+		"label": "Fragile",
+		"description": "Feeling emotionally or physically delicate, as if easily hurt or broken.",
+		"parentId": 6
+	},
+	{
+		"id": 32,
+		"label": "Abandoned",
+		"description": "Feeling left behind or rejected, as if no one cares for you anymore.",
+		"parentId": 6
+	},
+	{
+		"id": 33,
+		"label": "Desolate",
+		"description": "Feeling utterly alone and hopeless, often with a sense of emptiness or devastation.",
+		"parentId": 6
+	},
+	{
+		"id": 34,
+		"label": "Rushed",
+		"description": "Feeling overwhelmed by urgency or time pressure, leading to stress or frustration.",
+		"parentId": 7
+	},
+	{
+		"id": 35,
+		"label": "Bored",
+		"description": "Feeling disinterested or unmotivated, often when tasks or situations lack stimulation.",
+		"parentId": 7
+	},
+	{
+		"id": 36,
+		"label": "Harassed",
+		"description": "Feeling persistently bothered or attacked, often leading to a sense of being unfairly targeted.",
+		"parentId": 7
+	},
+	{
+		"id": 37,
+		"label": "Aggressive",
+		"description": "A hostile or forceful attitude, often in response to anger or perceived threats.",
+		"parentId": 7
+	},
+	{
+		"id": 38,
+		"label": "Frustrated",
+		"description": "Feeling upset or annoyed due to being blocked from achieving something or solving a problem.",
+		"parentId": 7
+	},
+	{
+		"id": 39,
+		"label": "Bitter",
+		"description": "Feeling deeply resentful or dissatisfied, often in response to perceived unfairness or loss.",
+		"parentId": 7
+	},
+	{
+		"id": 40,
+		"label": "Dismayed",
+		"description": "Feeling deeply disappointed or shocked by an event or behavior.",
+		"parentId": 7
+	},
+	{
+		"id": 41,
+		"label": "Indignant",
+		"description": "Feeling a mix of anger and moral outrage due to unfair treatment or disrespect.",
+		"parentId": 7
+	},
+	{
+		"id": 42,
+		"label": "Offended",
+		"description": "Feeling hurt or angry due to being disrespected or insulted.",
+		"parentId": 7
+	},
+	{
+		"id": 43,
+		"label": "Disrespected",
+		"description": "Feeling hurt or offended because someone treated you without the proper regard or honor.",
+		"parentId": 8
+	},
+	{
+		"id": 44,
+		"label": "Worthless",
+		"description": "Feeling as if you have no value or significance, often accompanied by self-doubt.",
+		"parentId": 8
+	},
+	{
+		"id": 45,
+		"label": "Guilty",
+		"description": "Feeling regret or responsibility for having done something wrong.",
+		"parentId": 8
+	},
+	{
+		"id": 46,
+		"label": "Sheepish",
+		"description": "Feeling embarrassed or shy due to a mistake or awkward situation.",
+		"parentId": 8
+	},
+	{
+		"id": 47,
+		"label": "Ashamed",
+		"description": "Feeling deeply embarrassed or guilty, especially about a personal flaw or action.",
+		"parentId": 8
+	},
+	{
+		"id": 48,
+		"label": "Inferior",
+		"description": "Feeling less than others, often due to a perceived lack of ability, strength, or importance.",
+		"parentId": 8
+	},
+	{
+		"id": 49,
+		"label": "Helpless",
+		"description": "Feeling unable to change or control a situation, often leading to a sense of vulnerability.",
+		"parentId": 9
+	},
+	{
+		"id": 50,
+		"label": "Threatened",
+		"description": "Feeling as though something or someone is putting you at risk, either physically or emotionally.",
+		"parentId": 9
+	},
+	{
+		"id": 51,
+		"label": "Confused",
+		"description": "Feeling unsure or unclear about what is happening or what to do.",
+		"parentId": 9
+	},
+	{
+		"id": 52,
+		"label": "Inadequate",
+		"description": "Feeling as though you are not good enough to meet a situation or expectation.",
+		"parentId": 9
+	},
+	{
+		"id": 53,
+		"label": "Worried",
+		"description": "Feeling uneasy or anxious about something that might happen in the future.",
+		"parentId": 9
+	},
+	{
+		"id": 54,
+		"label": "Stressed",
+		"description": "Feeling under pressure or overwhelmed by demands or expectations.",
+		"parentId": 9
+	},
+	{
+		"id": 55,
+		"label": "Apprehensive",
+		"description": "Feeling uneasy or fearful about something that might happen.",
+		"parentId": 9
+	},
+	{
+		"id": 56,
+		"label": "Trusting",
+		"description": "Having faith in yourself, others, or a situation, believing it will work out well.",
+		"parentId": 10
+	},
+	{
+		"id": 57,
+		"label": "Positive",
+		"description": "Feeling hopeful and assured about outcomes, focusing on the good aspects of a situation.",
+		"parentId": 10
+	},
+	{
+		"id": 58,
+		"label": "Fearless",
+		"description": "Having no fear or hesitation, showing courage in the face of uncertainty or danger.",
+		"parentId": 10
+	},
+	{
+		"id": 59,
+		"label": "Truthful",
+		"description": "Being honest and authentic, staying true to yourself and your values.",
+		"parentId": 10
+	},
+	{
+		"id": 60,
+		"label": "Optimistic",
+		"description": "Believing that things will turn out well and maintaining a hopeful attitude.",
+		"parentId": 10
+	},
+	{
+		"id": 61,
+		"label": "Bold",
+		"description": "Being willing to take risks and act courageously, often standing out with confidence.",
+		"parentId": 10
+	},
+	{
+		"id": 62,
+		"label": "Powerful",
+		"description": "Feeling capable, strong, and able to influence events or others effectively.",
+		"parentId": 10
+	},
+	{
+		"id": 63,
+		"label": "Proud",
+		"description": "Feeling a deep sense of satisfaction and self-respect, often for achievements or qualities.",
+		"parentId": 10
+	},
+	{
+		"id": 64,
+		"label": "Sensitive",
+		"description": "Being emotionally or mentally tuned into others or your surroundings, easily affected by feelings or changes.",
+		"parentId": 11
+	},
+	{
+		"id": 65,
+		"label": "Intrigued",
+		"description": "Feeling deeply curious or fascinated, eager to explore or learn more.",
+		"parentId": 11
+	},
+	{
+		"id": 66,
+		"label": "Allured",
+		"description": "Feeling drawn or tempted by something attractive or desirable.",
+		"parentId": 11
+	},
+	{
+		"id": 67,
+		"label": "Intimate",
+		"description": "Feeling emotionally or physically close, often creating a sense of connection or warmth.",
+		"parentId": 11
+	},
+	{
+		"id": 68,
+		"label": "Attracted",
+		"description": "Feeling drawn to someone or something, often with admiration or affection.",
+		"parentId": 11
+	},
+	{
+		"id": 69,
+		"label": "Creative",
+		"description": "Feeling inspired to imagine, create, or express new ideas.",
+		"parentId": 11
+	},
+	{
+		"id": 70,
+		"label": "Curious",
+		"description": "Feeling a strong desire to learn, explore, or understand something.",
+		"parentId": 11
+	},
+	{
+		"id": 71,
+		"label": "Playful",
+		"description": "Feeling lighthearted, fun-loving, or mischievous, often enjoying humor and games.",
+		"parentId": 11
+	},
+	{
+		"id": 72,
+		"label": "Charged",
+		"description": "Feeling highly energized or emotionally intense, as if ready to act.",
+		"parentId": 12
+	},
+	{
+		"id": 73,
+		"label": "Expectant",
+		"description": "Feeling eager and hopeful, anticipating something enjoyable or important.",
+		"parentId": 12
+	},
+	{
+		"id": 74,
+		"label": "High",
+		"description": "Feeling elated, as if elevated by intense excitement or joy.",
+		"parentId": 12
+	},
+	{
+		"id": 75,
+		"label": "Moved",
+		"description": "Feeling emotionally touched or deeply stirred by an experience or idea.",
+		"parentId": 12
+	},
+	{
+		"id": 76,
+		"label": "Aroused",
+		"description": "Feeling intensely stimulated, often by strong emotions or physical sensations.",
+		"parentId": 12
+	},
+	{
+		"id": 77,
+		"label": "Energetic",
+		"description": "Feeling full of vitality and readiness for action, as if brimming with power.",
+		"parentId": 12
+	},
+	{
+		"id": 78,
+		"label": "Surprised",
+		"description": "Feeling caught off guard by something unexpected but positive.",
+		"parentId": 12
+	},
+	{
+		"id": 79,
+		"label": "Amazed",
+		"description": "Feeling astonished by something extraordinary or unexpected.",
+		"parentId": 12
+	},
+	{
+		"id": 80,
+		"label": "Generous",
+		"description": "Being willing to give freely, whether in terms of time, resources, or emotions.",
+		"parentId": 13
+	},
+	{
+		"id": 81,
+		"label": "Grateful",
+		"description": "Feeling deeply appreciative and thankful for what you have or what others have done for you.",
+		"parentId": 13
+	},
+	{
+		"id": 82,
+		"label": "Accepting",
+		"description": "Being open-minded and respectful of others' differences or beliefs.",
+		"parentId": 13
+	},
+	{
+		"id": 83,
+		"label": "Committed",
+		"description": "Being dedicated and loyal, especially in relationships or responsibilities.",
+		"parentId": 13
+	},
+	{
+		"id": 84,
+		"label": "Caring",
+		"description": "Showing concern and attentiveness to others' needs or well-being.",
+		"parentId": 13
+	},
+	{
+		"id": 85,
+		"label": "Tolerant",
+		"description": "Being patient and understanding of others' differences or imperfections.",
+		"parentId": 13
+	},
+	{
+		"id": 86,
+		"label": "Content",
+		"description": "Feeling satisfied and at ease, often with a sense of inner peace.",
+		"parentId": 13
+	},
+	{
+		"id": 87,
+		"label": "Gratified",
+		"description": "Feeling pleased and thankful, often due to satisfaction or acknowledgment.",
+		"parentId": 13
+	},
+	{
+		"id": 88,
+		"label": "Joyful",
+		"description": "Feeling deeply happy and full of delight, often with a sense of freedom and fulfillment.",
+		"parentId": 13
+	},
+	{
+		"id": 89,
+		"label": "Invited",
+		"description": "Feeling welcomed and encouraged to join or participate, often with a sense of being wanted.",
+		"parentId": 14
+	},
+	{
+		"id": 90,
+		"label": "Attractive",
+		"description": "Feeling appealing or desirable, either physically, emotionally, or intellectually.",
+		"parentId": 14
+	},
+	{
+		"id": 91,
+		"label": "Loved",
+		"description": "Feeling deeply cared for and cherished by others.",
+		"parentId": 14
+	},
+	{
+		"id": 92,
+		"label": "Beloved",
+		"description": "Feeling deeply adored and treasured by others.",
+		"parentId": 14
+	},
+	{
+		"id": 93,
+		"label": "Honored",
+		"description": "Feeling respected and recognized for your achievements, character, or presence.",
+		"parentId": 14
+	},
+	{
+		"id": 94,
+		"label": "Popular",
+		"description": "Feeling widely liked or admired by many people.",
+		"parentId": 14
+	},
+	{
+		"id": 95,
+		"label": "Cooperative",
+		"description": "Feeling engaged in working together with others, often contributing constructively.",
+		"parentId": 14
+	},
+	{
+		"id": 96,
+		"label": "Respected",
+		"description": "Feeling regarded highly for your values, actions, or character.",
+		"parentId": 14
+	},
+	{
+		"id": 97,
+		"label": "Morose",
+		"description": "Feeling gloomy and sulky, often unwilling to talk or engage with others. This feels like a constant cloud of negativity.",
+		"parentId": 15
+	},
+	{
+		"id": 98,
+		"label": "Despondent",
+		"description": "A deeper level of sadness where you feel entirely without hope or motivation to move forward, as if life has lost its meaning.",
+		"parentId": 15
+	},
+	{
+		"id": 99,
+		"label": "Deflated",
+		"description": "Feeling emotionally let down or disappointed, as though your enthusiasm or confidence has been punctured.",
+		"parentId": 16
+	},
+	{
+		"id": 100,
+		"label": "Injured",
+		"description": "Feeling personally attacked or offended, like someone has harmed your inner self.",
+		"parentId": 16
+	},
+	{
+		"id": 101,
+		"label": "Disconsolate",
+		"description": "Feeling so deeply sad that nothing can bring comfort or relief, often following a significant loss.",
+		"parentId": 17
+	},
+	{
+		"id": 102,
+		"label": "Inconsolable",
+		"description": "An even more intense version of disconsolate, where the sadness feels unending and overpowering.",
+		"parentId": 17
+	},
+	{
+		"id": 103,
+		"label": "Mournful",
+		"description": "A deep sorrow often linked to grieving or a loss, such as mourning the death of a loved one.",
+		"parentId": 18
+	},
+	{
+		"id": 104,
+		"label": "Sorrowful",
+		"description": "Feeling overwhelmed with sadness, usually about something significant or regretful.",
+		"parentId": 18
+	},
+	{
+		"id": 105,
+		"label": "Gloomy",
+		"description": "Feeling downcast and pessimistic, as if surrounded by darkness and negativity.",
+		"parentId": 19
+	},
+	{
+		"id": 106,
+		"label": "Somber",
+		"description": "A serious and reflective sadness, often tied to a serious or grave situation.",
+		"parentId": 19
+	},
+	{
+		"id": 107,
+		"label": "Agonized",
+		"description": "A sharp emotional or physical pain that is almost unbearable, as if every part of you is hurting.",
+		"parentId": 20
+	},
+	{
+		"id": 108,
+		"label": "Wounded",
+		"description": "Feeling deeply hurt, especially by betrayal or unkindness, leaving a lingering sense of pain.",
+		"parentId": 20
+	},
+	{
+		"id": 109,
+		"label": "Crestfallen",
+		"description": "A sad disappointment, often after a failure or rejection, where you feel like you've let yourself or others down.",
+		"parentId": 21
+	},
+	{
+		"id": 110,
+		"label": "Broken",
+		"description": "Feeling completely overwhelmed and emotionally shattered, as though you're unable to recover from the pain.",
+		"parentId": 21
+	},
+	{
+		"id": 111,
+		"label": "Contemptuous",
+		"description": "Viewing someone or something with extreme disrespect or disdain, often feeling superior to them.",
+		"parentId": 22
+	},
+	{
+		"id": 112,
+		"label": "Disdainful",
+		"description": "Feeling scorn or strong disapproval, as if something is beneath you or not worth your time.",
+		"parentId": 22
+	},
+	{
+		"id": 113,
+		"label": "Revolted",
+		"description": "Feeling extreme disgust, as if you want to distance yourself from something or someone.",
+		"parentId": 23
+	},
+	{
+		"id": 114,
+		"label": "Nauseated",
+		"description": "A physical and emotional reaction where you feel sick to your stomach because of how repulsive something is.",
+		"parentId": 23
+	},
+	{
+		"id": 115,
+		"label": "Disturbed",
+		"description": "Feeling unsettled or uneasy, as if something is off or not right.",
+		"parentId": 24
+	},
+	{
+		"id": 116,
+		"label": "Scandalized",
+		"description": "Shocked or offended by behavior that you find immoral, improper, or outrageous.",
+		"parentId": 24
+	},
+	{
+		"id": 117,
+		"label": "Sickened",
+		"description": "Feeling both emotional and physical discomfort, as if something is intolerable or vile.",
+		"parentId": 25
+	},
+	{
+		"id": 118,
+		"label": "Aghast",
+		"description": "Completely stunned by horror or shock, often leaving you speechless.",
+		"parentId": 25
+	},
+	{
+		"id": 119,
+		"label": "Repulsed",
+		"description": "Feeling pushed back emotionally or mentally, as if something is too unpleasant to tolerate.",
+		"parentId": 26
+	},
+	{
+		"id": 120,
+		"label": "Soothe",
+		"description": "(Misfit in context - likely error in source) This term is the opposite of repelled, where you feel calm and comforted instead of disgusted.",
+		"parentId": 26
+	},
+	{
+		"id": 121,
+		"label": "Critical",
+		"description": "Carefully evaluating or judging something, often finding faults or flaws.",
+		"parentId": 27
+	},
+	{
+		"id": 122,
+		"label": "Disapproving",
+		"description": "Showing a clear sense of disagreement or dislike toward someone's actions or behavior.",
+		"parentId": 27
+	},
+	{
+		"id": 123,
+		"label": "Withdrawn",
+		"description": "Pulling away from social interaction, preferring solitude or avoiding others due to emotional overwhelm or sadness.",
+		"parentId": 28
+	},
+	{
+		"id": 124,
+		"label": "Detached",
+		"description": "Feeling unconnected or indifferent, as if observing life from a distance without emotional involvement.",
+		"parentId": 28
+	},
+	{
+		"id": 125,
+		"label": "Isolated",
+		"description": "Being physically or emotionally cut off from others, creating a sense of being alone or excluded.",
+		"parentId": 29
+	},
+	{
+		"id": 126,
+		"label": "Forlorn",
+		"description": "Feeling hopelessly lonely or abandoned, as if there is no chance of comfort or connection.",
+		"parentId": 29
+	},
+	{
+		"id": 127,
+		"label": "Deserted",
+		"description": "Feeling abandoned or left alone, especially when you were expecting support or company.",
+		"parentId": 30
+	},
+	{
+		"id": 128,
+		"label": "Forsaken",
+		"description": "Feeling entirely abandoned or forgotten, often with a sense of betrayal or hopelessness.",
+		"parentId": 30
+	},
+	{
+		"id": 129,
+		"label": "Vulnerable",
+		"description": "Feeling unprotected or exposed, as if others can easily harm or take advantage of you.",
+		"parentId": 31
+	},
+	{
+		"id": 130,
+		"label": "Exposed",
+		"description": "Feeling open and defenseless, as if your weaknesses are visible to others.",
+		"parentId": 31
+	},
+	{
+		"id": 131,
+		"label": "Rejected",
+		"description": "Feeling pushed away or unwanted, often because others have chosen not to accept you.",
+		"parentId": 32
+	},
+	{
+		"id": 132,
+		"label": "Friendless",
+		"description": "Feeling like you have no friends or social connections to rely on.",
+		"parentId": 32
+	},
+	{
+		"id": 133,
+		"label": "Bleak",
+		"description": "Feeling like there is no hope or positivity, as if surrounded by emotional or physical darkness.",
+		"parentId": 33
+	},
+	{
+		"id": 134,
+		"label": "Destroyed",
+		"description": "Feeling completely broken, emotionally or mentally, as if there's nothing left to hold onto.",
+		"parentId": 33
+	},
+	{
+		"id": 135,
+		"label": "Pushed",
+		"description": "Feeling like you're being forced to act quickly or without enough time, creating discomfort or anger.",
+		"parentId": 34
+	},
+	{
+		"id": 136,
+		"label": "Pressured",
+		"description": "Feeling as if others are placing demands or expectations on you, causing frustration or irritation.",
+		"parentId": 34
+	},
+	{
+		"id": 137,
+		"label": "Indifferent",
+		"description": "Feeling emotionally disconnected or uninterested in what's happening.",
+		"parentId": 35
+	},
+	{
+		"id": 138,
+		"label": "Apathetic",
+		"description": "Feeling a lack of enthusiasm or concern, as if nothing matters or engages you.",
+		"parentId": 35
+	},
+	{
+		"id": 139,
+		"label": "Persecuted",
+		"description": "Feeling unfairly treated or victimized, as if someone is purposefully making your life difficult.",
+		"parentId": 36
+	},
+	{
+		"id": 140,
+		"label": "Provoked",
+		"description": "Feeling anger or irritation as a result of being intentionally annoyed or instigated.",
+		"parentId": 36
+	},
+	{
+		"id": 141,
+		"label": "Belligerent",
+		"description": "Feeling ready to fight or argue, often without much provocation.",
+		"parentId": 37
+	},
+	{
+		"id": 142,
+		"label": "Hostile",
+		"description": "Feeling antagonistic or unfriendly, as if resisting or opposing others.",
+		"parentId": 37
+	},
+	{
+		"id": 143,
+		"label": "Annoyed",
+		"description": "Feeling slightly irritated or bothered by someone or something.",
+		"parentId": 38
+	},
+	{
+		"id": 144,
+		"label": "Infuriated",
+		"description": "Feeling extremely angry, often to the point of losing control.",
+		"parentId": 38
+	},
+	{
+		"id": 145,
+		"label": "Resentful",
+		"description": "Feeling a lingering anger over being treated unfairly or feeling unappreciated.",
+		"parentId": 39
+	},
+	{
+		"id": 146,
+		"label": "Jealous",
+		"description": "Feeling angry or envious because someone else has something you want or feel you deserve.",
+		"parentId": 39
+	},
+	{
+		"id": 147,
+		"label": "Let down",
+		"description": "Feeling disappointed because someone or something didn't meet your expectations.",
+		"parentId": 40
+	},
+	{
+		"id": 148,
+		"label": "Betrayed",
+		"description": "Feeling deeply hurt and angry because someone broke your trust.",
+		"parentId": 40
+	},
+	{
+		"id": 149,
+		"label": "Violated",
+		"description": "Feeling as if your rights or boundaries were disrespected or broken.",
+		"parentId": 41
+	},
+	{
+		"id": 150,
+		"label": "Outraged",
+		"description": "Feeling extremely angry and shocked, especially when witnessing something unjust or offensive.",
+		"parentId": 41
+	},
+	{
+		"id": 151,
+		"label": "Insulted",
+		"description": "Feeling upset because someone said or did something disrespectful to you.",
+		"parentId": 42
+	},
+	{
+		"id": 152,
+		"label": "Mocked",
+		"description": "Feeling humiliated or ridiculed because someone made fun of you in a mean way.",
+		"parentId": 42
+	},
+	{
+		"id": 153,
+		"label": "Dishonored",
+		"description": "Feeling as though your reputation or dignity has been damaged.",
+		"parentId": 43
+	},
+	{
+		"id": 154,
+		"label": "Ridiculed",
+		"description": "Feeling mocked or laughed at in a way that makes you feel small or humiliated.",
+		"parentId": 43
+	},
+	{
+		"id": 155,
+		"label": "Insignificant",
+		"description": "Feeling unimportant or overlooked, as if you don't matter.",
+		"parentId": 44
+	},
+	{
+		"id": 156,
+		"label": "Useless",
+		"description": "Feeling incapable or unproductive, as if you cannot contribute meaningfully.",
+		"parentId": 44
+	},
+	{
+		"id": 157,
+		"label": "Remorseful",
+		"description": "Feeling deep regret and sorrow for a mistake or hurtful action.",
+		"parentId": 45
+	},
+	{
+		"id": 158,
+		"label": "Repentant",
+		"description": "Feeling sorry and wanting to make up for something wrong you did.",
+		"parentId": 45
+	},
+	{
+		"id": 159,
+		"label": "Contrite",
+		"description": "Feeling apologetic or regretful for something you said or did.",
+		"parentId": 46
+	},
+	{
+		"id": 160,
+		"label": "Abashed",
+		"description": "Feeling ashamed or uneasy, often because of being caught in an awkward or wrong situation.",
+		"parentId": 46
+	},
+	{
+		"id": 161,
+		"label": "Mortified",
+		"description": "Feeling extremely embarrassed to the point of being deeply uncomfortable.",
+		"parentId": 47
+	},
+	{
+		"id": 162,
+		"label": "Humiliated",
+		"description": "Feeling completely embarrassed and belittled, often by someone else's actions.",
+		"parentId": 47
+	},
+	{
+		"id": 163,
+		"label": "Weak",
+		"description": "Feeling physically or emotionally powerless or incapable.",
+		"parentId": 48
+	},
+	{
+		"id": 164,
+		"label": "Small",
+		"description": "Feeling insignificant or overshadowed in comparison to others.",
+		"parentId": 48
+	},
+	{
+		"id": 165,
+		"label": "Powerless",
+		"description": "Feeling completely without strength or ability to act.",
+		"parentId": 49
+	},
+	{
+		"id": 166,
+		"label": "Out of Control",
+		"description": "Feeling unable to influence events or outcomes around you.",
+		"parentId": 49
+	},
+	{
+		"id": 167,
+		"label": "Intimidated",
+		"description": "Feeling scared or unsettled by someone's power, authority, or behavior.",
+		"parentId": 50
+	},
+	{
+		"id": 168,
+		"label": "Imperiled",
+		"description": "Feeling as though you're in immediate danger or at risk of harm.",
+		"parentId": 50
+	},
+	{
+		"id": 169,
+		"label": "Perturbed",
+		"description": "Feeling slightly disturbed or unsettled because of uncertainty.",
+		"parentId": 51
+	},
+	{
+		"id": 170,
+		"label": "Bewildered",
+		"description": "Feeling completely puzzled or lost in understanding.",
+		"parentId": 51
+	},
+	{
+		"id": 171,
+		"label": "Incompetent",
+		"description": "Feeling unable to do something properly or effectively.",
+		"parentId": 52
+	},
+	{
+		"id": 172,
+		"label": "Insecure",
+		"description": "Feeling uncertain about yourself or your abilities.",
+		"parentId": 52
+	},
+	{
+		"id": 173,
+		"label": "Anxious",
+		"description": "Feeling nervous or restless about potential dangers or problems.",
+		"parentId": 53
+	},
+	{
+		"id": 174,
+		"label": "Alarmed",
+		"description": "Feeling suddenly afraid or concerned due to an unexpected event.",
+		"parentId": 53
+	},
+	{
+		"id": 175,
+		"label": "Overwhelmed",
+		"description": "Feeling unable to handle everything happening at once.",
+		"parentId": 54
+	},
+	{
+		"id": 176,
+		"label": "Desperate",
+		"description": "Feeling hopeless and in urgent need of a solution or escape.",
+		"parentId": 54
+	},
+	{
+		"id": 177,
+		"label": "Timid",
+		"description": "Feeling shy or easily frightened, often avoiding risks.",
+		"parentId": 55
+	},
+	{
+		"id": 178,
+		"label": "Nervous",
+		"description": "Feeling jittery or uneasy, usually in anticipation of something.",
+		"parentId": 55
+	},
+	{
+		"id": 179,
+		"label": "Earnest",
+		"description": "Showing sincere and intense belief or confidence in someone or something.",
+		"parentId": 56
+	},
+	{
+		"id": 180,
+		"label": "Assured",
+		"description": "Feeling certain and secure, as if there is no doubt in your mind.",
+		"parentId": 56
+	},
+	{
+		"id": 181,
+		"label": "Convinced",
+		"description": "Feeling certain about the truth or correctness of something.",
+		"parentId": 57
+	},
+	{
+		"id": 182,
+		"label": "Sanguine",
+		"description": "Being cheerfully optimistic, even in difficult circumstances.",
+		"parentId": 57
+	},
+	{
+		"id": 183,
+		"label": "Sure",
+		"description": "Feeling absolutely certain about your decisions or abilities.",
+		"parentId": 58
+	},
+	{
+		"id": 184,
+		"label": "Dauntless",
+		"description": "Feeling brave and unshaken by challenges or risks.",
+		"parentId": 58
+	},
+	{
+		"id": 185,
+		"label": "Authentic",
+		"description": "Being genuine, real, and true to who you are without pretense.",
+		"parentId": 59
+	},
+	{
+		"id": 186,
+		"label": "Honest",
+		"description": "Speaking and acting with integrity, always telling the truth.",
+		"parentId": 59
+	},
+	{
+		"id": 187,
+		"label": "Upbeat",
+		"description": "Feeling cheerful and positive, often spreading good energy.",
+		"parentId": 60
+	},
+	{
+		"id": 188,
+		"label": "Hopeful",
+		"description": "Expecting positive outcomes, even in uncertain situations.",
+		"parentId": 60
+	},
+	{
+		"id": 189,
+		"label": "Brave",
+		"description": "Facing fear or danger with strength and courage.",
+		"parentId": 61
+	},
+	{
+		"id": 190,
+		"label": "Courageous",
+		"description": "Acting with bravery, especially in the face of adversity or challenge.",
+		"parentId": 61
+	},
+	{
+		"id": 191,
+		"label": "Self-reliant",
+		"description": "Relying on your own abilities and strength rather than depending on others.",
+		"parentId": 62
+	},
+	{
+		"id": 192,
+		"label": "Magnanimous",
+		"description": "Being generous and noble, showing confidence in your ability to give or forgive.",
+		"parentId": 62
+	},
+	{
+		"id": 193,
+		"label": "Expansive",
+		"description": "Feeling open, confident, and eager to share your achievements or feelings.",
+		"parentId": 63
+	},
+	{
+		"id": 194,
+		"label": "Self-assured",
+		"description": "Having a strong belief in your abilities and value, without needing validation.",
+		"parentId": 63
+	},
+	{
+		"id": 195,
+		"label": "Responsive",
+		"description": "Reacting quickly and positively to people or stimuli, showing understanding or care.",
+		"parentId": 64
+	},
+	{
+		"id": 196,
+		"label": "Receptive",
+		"description": "Open and willing to accept new ideas, feelings, or experiences.",
+		"parentId": 64
+	},
+	{
+		"id": 197,
+		"label": "Beguiled",
+		"description": "Captivated by something charming, mysterious, or enchanting.",
+		"parentId": 65
+	},
+	{
+		"id": 198,
+		"label": "Fascinated",
+		"description": "Completely absorbed or amazed by something interesting or remarkable.",
+		"parentId": 65
+	},
+	{
+		"id": 199,
+		"label": "Enticed",
+		"description": "Persuaded or attracted by the appeal or charm of something.",
+		"parentId": 66
+	},
+	{
+		"id": 200,
+		"label": "Drawn",
+		"description": "Feeling naturally pulled toward something or someone.",
+		"parentId": 66
+	},
+	{
+		"id": 201,
+		"label": "Attentive",
+		"description": "Showing focused care and consideration for someone or something.",
+		"parentId": 67
+	},
+	{
+		"id": 202,
+		"label": "Romantic",
+		"description": "Feeling affection or love, often with an emotional or passionate connection.",
+		"parentId": 67
+	},
+	{
+		"id": 203,
+		"label": "Infatuated",
+		"description": "Experiencing an intense but often short-lived admiration or passion for someone.",
+		"parentId": 68
+	},
+	{
+		"id": 204,
+		"label": "Captivated",
+		"description": "Completely enchanted or absorbed by someone or something beautiful or fascinating.",
+		"parentId": 68
+	},
+	{
+		"id": 205,
+		"label": "Engaged",
+		"description": "Being fully absorbed or involved in an activity or idea.",
+		"parentId": 69
+	},
+	{
+		"id": 206,
+		"label": "Inspired",
+		"description": "Feeling motivated or uplifted to create, act, or think differently.",
+		"parentId": 69
+	},
+	{
+		"id": 207,
+		"label": "Thoughtful",
+		"description": "Reflecting deeply and showing care or consideration.",
+		"parentId": 70
+	},
+	{
+		"id": 208,
+		"label": "Inquisitive",
+		"description": "Eager to ask questions and seek knowledge.",
+		"parentId": 70
+	},
+	{
+		"id": 209,
+		"label": "Feisty",
+		"description": "Energetic and spirited, sometimes with a touch of defiance.",
+		"parentId": 71
+	},
+	{
+		"id": 210,
+		"label": "Cheeky",
+		"description": "Playfully bold or slightly naughty in a charming way.",
+		"parentId": 71
+	},
+	{
+		"id": 211,
+		"label": "Inflamed",
+		"description": "Feeling strongly passionate or stirred up, often emotionally intense.",
+		"parentId": 72
+	},
+	{
+		"id": 212,
+		"label": "Animated",
+		"description": "Feeling lively and full of energy, as if bubbling with excitement.",
+		"parentId": 72
+	},
+	{
+		"id": 213,
+		"label": "Fired up",
+		"description": "Feeling enthusiastic and ready for action, often motivated by a specific goal.",
+		"parentId": 73
+	},
+	{
+		"id": 214,
+		"label": "Piqued",
+		"description": "Feeling intrigued or stimulated, as if curiosity or interest has been heightened.",
+		"parentId": 73
+	},
+	{
+		"id": 215,
+		"label": "Awakened",
+		"description": "Feeling invigorated or fully alert, often as a result of excitement.",
+		"parentId": 74
+	},
+	{
+		"id": 216,
+		"label": "Roused",
+		"description": "Feeling stirred or motivated into action by enthusiasm or interest.",
+		"parentId": 74
+	},
+	{
+		"id": 217,
+		"label": "Aflame",
+		"description": "Feeling emotionally ignited, as if burning with excitement or passion.",
+		"parentId": 75
+	},
+	{
+		"id": 218,
+		"label": "Stirred",
+		"description": "Feeling deeply affected, emotionally or intellectually.",
+		"parentId": 75
+	},
+	{
+		"id": 219,
+		"label": "Stimulated",
+		"description": "Feeling highly engaged or activated, as if something has awakened your senses.",
+		"parentId": 76
+	},
+	{
+		"id": 220,
+		"label": "Passionate",
+		"description": "Feeling deeply emotional and intensely driven by love or enthusiasm.",
+		"parentId": 76
+	},
+	{
+		"id": 221,
+		"label": "Eager",
+		"description": "Feeling enthusiastic and ready to start something, driven by excitement.",
+		"parentId": 77
+	},
+	{
+		"id": 222,
+		"label": "Enthusiastic",
+		"description": "Feeling strongly positive and actively engaged, often expressing excitement outwardly.",
+		"parentId": 77
+	},
+	{
+		"id": 223,
+		"label": "Delighted",
+		"description": "Feeling pleasantly surprised and joyful.",
+		"parentId": 78
+	},
+	{
+		"id": 224,
+		"label": "Thrilled",
+		"description": "Feeling extremely happy and excited about something unexpected or delightful.",
+		"parentId": 78
+	},
+	{
+		"id": 225,
+		"label": "Astonished",
+		"description": "Feeling completely surprised and impressed by something remarkable.",
+		"parentId": 79
+	},
+	{
+		"id": 226,
+		"label": "Awed",
+		"description": "Feeling overwhelmed with wonder and admiration, as if humbled by something great.",
+		"parentId": 79
+	},
+	{
+		"id": 227,
+		"label": "Willing",
+		"description": "Feeling eager to help or share without hesitation.",
+		"parentId": 80
+	},
+	{
+		"id": 228,
+		"label": "Kindhearted",
+		"description": "Showing compassion and genuine care for others' well-being.",
+		"parentId": 80
+	},
+	{
+		"id": 229,
+		"label": "Humbled",
+		"description": "Feeling modest and appreciative, often due to someone else's kindness.",
+		"parentId": 81
+	},
+	{
+		"id": 230,
+		"label": "Beneficent",
+		"description": "Feeling motivated to do good or help others.",
+		"parentId": 81
+	},
+	{
+		"id": 231,
+		"label": "Respectful",
+		"description": "Showing consideration and regard for others' feelings or perspectives.",
+		"parentId": 82
+	},
+	{
+		"id": 232,
+		"label": "Friendly",
+		"description": "Being approachable and kind in interactions with others.",
+		"parentId": 82
+	},
+	{
+		"id": 233,
+		"label": "Faithful",
+		"description": "Remaining loyal and trustworthy to someone or something.",
+		"parentId": 83
+	},
+	{
+		"id": 234,
+		"label": "Dating",
+		"description": "Being in a relationship with emotional investment and care.",
+		"parentId": 83
+	},
+	{
+		"id": 235,
+		"label": "Considerate",
+		"description": "Thinking about others' feelings and showing kindness in your actions.",
+		"parentId": 84
+	},
+	{
+		"id": 236,
+		"label": "Devoted",
+		"description": "Demonstrating strong love and dedication to someone or something.",
+		"parentId": 84
+	},
+	{
+		"id": 237,
+		"label": "Benevolent",
+		"description": "Having a kind and charitable attitude toward others.",
+		"parentId": 85
+	},
+	{
+		"id": 238,
+		"label": "Amiable",
+		"description": "Being friendly and pleasant in manner or interactions.",
+		"parentId": 85
+	},
+	{
+		"id": 239,
+		"label": "Peaceful",
+		"description": "Feeling calm and harmonious, free from conflict or worry.",
+		"parentId": 86
+	},
+	{
+		"id": 240,
+		"label": "Warm",
+		"description": "Feeling affectionate and kind, often creating a sense of comfort for others.",
+		"parentId": 86
+	},
+	{
+		"id": 241,
+		"label": "Thankful",
+		"description": "Feeling genuine appreciation for someone or something.",
+		"parentId": 87
+	},
+	{
+		"id": 242,
+		"label": "Pleased",
+		"description": "Feeling happy or satisfied with an outcome or situation.",
+		"parentId": 87
+	},
+	{
+		"id": 243,
+		"label": "Free",
+		"description": "Feeling liberated and unburdened, with a lighthearted joy.",
+		"parentId": 88
+	},
+	{
+		"id": 244,
+		"label": "Fulfilled",
+		"description": "Feeling complete and satisfied, often due to achieving something meaningful.",
+		"parentId": 88
+	},
+	{
+		"id": 245,
+		"label": "Needed",
+		"description": "Feeling essential or important, as if your presence or contribution matters.",
+		"parentId": 89
+	},
+	{
+		"id": 246,
+		"label": "Wanted",
+		"description": "Feeling desired or valued by others for who you are.",
+		"parentId": 89
+	},
+	{
+		"id": 247,
+		"label": "Beautiful",
+		"description": "Feeling admired for physical or inner beauty.",
+		"parentId": 90
+	},
+	{
+		"id": 248,
+		"label": "Interesting",
+		"description": "Feeling captivating or engaging, as if you catch others' attention in a positive way.",
+		"parentId": 90
+	},
+	{
+		"id": 249,
+		"label": "Appreciated",
+		"description": "Feeling valued and recognized for your qualities or efforts.",
+		"parentId": 91
+	},
+	{
+		"id": 250,
+		"label": "Favored",
+		"description": "Feeling preferred or especially liked by someone.",
+		"parentId": 91
+	},
+	{
+		"id": 251,
+		"label": "Cherished",
+		"description": "Feeling loved and held in high regard, as if you are invaluable.",
+		"parentId": 92
+	},
+	{
+		"id": 252,
+		"label": "Precious",
+		"description": "Feeling uniquely special and highly valued by others.",
+		"parentId": 92
+	},
+	{
+		"id": 253,
+		"label": "Esteemed",
+		"description": "Feeling admired and held in high regard by others.",
+		"parentId": 93
+	},
+	{
+		"id": 254,
+		"label": "Important",
+		"description": "Feeling significant and valued for your contributions or presence.",
+		"parentId": 93
+	},
+	{
+		"id": 255,
+		"label": "In Demand",
+		"description": "Feeling sought after or highly valued for your abilities or personality.",
+		"parentId": 94
+	},
+	{
+		"id": 256,
+		"label": "Admired",
+		"description": "Feeling respected and looked up to for your qualities or accomplishments.",
+		"parentId": 94
+	},
+	{
+		"id": 257,
+		"label": "Constructive",
+		"description": "Feeling productive and helpful, focusing on positive outcomes.",
+		"parentId": 95
+	},
+	{
+		"id": 258,
+		"label": "Helpful",
+		"description": "Feeling willing and able to assist others effectively.",
+		"parentId": 95
+	},
+	{
+		"id": 259,
+		"label": "Valued",
+		"description": "Feeling recognized as important and worthwhile by others.",
+		"parentId": 96
+	},
+	{
+		"id": 260,
+		"label": "Validated",
+		"description": "Feeling acknowledged and supported in your opinions, feelings, or identity.",
+		"parentId": 96
+	}
+]
