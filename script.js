@@ -124,8 +124,10 @@ function getNodeStyle(node) {
 function applyAllNodeStyles() {
 	const nodesToUpdate = [];
 	nodes.forEach(node => {
+		// Ensure we include the current label when updating styles
 		nodesToUpdate.push({
 			id: node.id,
+			label: node.label, // Include the current label
 			color: getNodeStyle(node),
 			font: {
 				size: node.id === currentSelectedNodeId ? 16 : 14,
@@ -638,7 +640,7 @@ function updateNodeLabels(translationMap, savedNodeStates) {
 			// Keep all node properties except update label and description
 			nodesToUpdate.push({
 				id: node.id,
-				label: translation.label,
+				label: translation.label + ((savedNodeStates[node.id]?._notes || '') ? ' 📝' : ''),
 				description: translation.description,
 				// Preserve previous states
 				_feltState: savedNodeStates[node.id]?._feltState,
@@ -796,6 +798,9 @@ function showPanelForNode(nodeId) {
 		panelFeelYesBtn.classList.toggle('selected-feel', nodeData._feltState === true);
 		panelFeelNoBtn.classList.toggle('selected-feel', nodeData._feltState === false);
 
+		// Reset save button text
+		panelSaveNoteBtn.textContent = currentLanguage === 'en' ? "Save Note" : "ذخیره یادداشت";
+
 		console.log(`Showing panel for node ${nodeId}, tour active: ${isTourActive}, felt state: ${nodeData._feltState}`);
 
 		if (isTourActive) {
@@ -927,13 +932,33 @@ function handleFeelDecision(isFelt) {
 function saveNote() {
 	if (!currentSelectedNodeId) return;
 	const noteText = panelNotesArea.value;
+
+	// Get the current node data to determine the base label
+	const node = nodes.get(currentSelectedNodeId);
+	if (!node) return; // Should not happen, but good practice
+
+	// Remove existing indicator to get the base label
+	const baseLabel = node.label.replace(' 📝', '');
+
+	// Determine the new label with or without the indicator
+	const newLabel = baseLabel + (noteText ? ' 📝' : '');
+
 	nodes.update({
 		id: currentSelectedNodeId,
-		_notes: noteText
+		_notes: noteText,
+		label: newLabel // Update the label along with the notes
 	});
 	console.log(`Note saved for node ${currentSelectedNodeId}: "${noteText}"`);
+
+	// Force a network rebuild to ensure the label update is rendered
+	// Passing 'false' prevents animation
+	rebuildNetworkWithVisibleNodes(false);
+
+	// Update button text for feedback
 	panelSaveNoteBtn.textContent = "Saved!";
-	setTimeout(() => { panelSaveNoteBtn.textContent = "Save Note"; }, 1500);
+	setTimeout(() => {
+		panelSaveNoteBtn.textContent = currentLanguage === 'en' ? "Save Note" : "ذخیره یادداشت";
+	}, 1500);
 }
 
 
@@ -1280,7 +1305,7 @@ function buildDataSetsWithSavedStates(savedStates = {}) {
 
 		return {
 			id: emotion.id,
-			label: emotion.label,
+			label: emotion.label + ((savedState._notes || '') ? ' 📝' : ''),
 			description: emotion.description || 'No description available.',
 			level: levelMap[emotion.id],
 			_childrenHidden: savedState._childrenHidden !== undefined ? savedState._childrenHidden : emotion.parentId !== null,
