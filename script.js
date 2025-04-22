@@ -556,12 +556,6 @@ function updateResetInstructions() {
 		instructionsDiv.style.fontSize = '12px';
 		document.body.appendChild(instructionsDiv);
 	}
-
-	if (currentLanguage === 'en') {
-		instructionsDiv.innerHTML = '<p>Note: To reset all emotions and notes, simply reload the page.</p>';
-	} else {
-		instructionsDiv.innerHTML = '<p>توجه: برای بازنشانی تمام احساسات و یادداشت‌ها، صفحه را دوباره بارگیری کنید.</p>';
-	}
 }
 
 // Handles language switching
