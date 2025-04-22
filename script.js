@@ -1613,15 +1613,36 @@ function resetAllData() {
 	}
 }
 
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', init);
+
+// Function to set an emoji as favicon
+function setEmojiFavicon(emoji) {
+	const canvas = document.createElement('canvas');
+	canvas.width = 32;
+	canvas.height = 32;
+	const ctx = canvas.getContext('2d');
+	ctx.font = '28px serif';
+	ctx.textAlign = 'center';
+	ctx.textBaseline = 'middle';
+	ctx.fillText(emoji, 16, 16);
+
+	const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+	link.type = 'image/x-icon';
+	link.rel = 'shortcut icon';
+	link.href = canvas.toDataURL();
+	document.getElementsByTagName('head')[0].appendChild(link);
+}
+
 // Initialize the application
 async function init() {
+	// Set emoji favicon (using a heart emoji for emotions map)
+	setEmojiFavicon('❤️');
+
 	await loadEmotionData();
 	loadSavedData(); // Load saved data after building initial datasets
 	updateUILanguage(false);
 	updateResetInstructions();
 }
-
-// --- Initialization ---
-document.addEventListener('DOMContentLoaded', init);
 
 
