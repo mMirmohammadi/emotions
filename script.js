@@ -278,56 +278,66 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 		}
 	}
 
-	// Reset visible nodes
-	visibleNodeIds = new Set();
+	// IMPORTANT: Save current visible nodes before potentially modifying them
+	const savedVisibleNodeIds = new Set(visibleNodeIds);
 
-	// Find all felt nodes and their ancestors
-	const feltNodeIds = nodes.getIds({ filter: item => item._feltState === true });
-	const ancestorIds = new Set();
+	// Only reset and recalculate visibility if we're not in filtered mode
+	if (!isFiltered) {
+		// Reset visible nodes
+		visibleNodeIds = new Set();
 
-	// Add all ancestors of felt nodes to the ancestor set
-	feltNodeIds.forEach(id => {
-		let currentId = id;
-		while (currentId !== null) {
-			const parentId = allEmotionData.find(e => e.id === currentId)?.parentId;
-			if (parentId !== null && parentId !== undefined) {
-				ancestorIds.add(parentId);
-				currentId = parentId;
-			} else {
-				currentId = null;
-			}
-		}
-	});
+		// Find all felt nodes and their ancestors
+		const feltNodeIds = nodes.getIds({ filter: item => item._feltState === true });
+		const ancestorIds = new Set();
 
-	// Add root node and its direct children
-	const rootNode = allEmotionData.find(e => e.parentId === null);
-	if (rootNode) {
-		visibleNodeIds.add(rootNode.id);
-		const directChildren = allEmotionData.filter(e => e.parentId === rootNode.id);
-		directChildren.forEach(child => visibleNodeIds.add(child.id));
-	}
-
-	// Add felt nodes and their ancestors
-	feltNodeIds.forEach(id => visibleNodeIds.add(id));
-	ancestorIds.forEach(id => visibleNodeIds.add(id));
-
-	// For each visible node, check if its children should be shown based on _childrenHidden
-	visibleNodeIds.forEach(nodeId => {
-		const node = nodes.get(nodeId);
-		if (node && !node._childrenHidden) {
-			// If children should be shown, add ALL children (not just felt ones)
-			const children = allEmotionData.filter(e => e.parentId === nodeId);
-			children.forEach(child => {
-				visibleNodeIds.add(child.id);
-				
-				// If this child is also expanded, recursively process its children
-				const childNode = nodes.get(child.id);
-				if (childNode && !childNode._childrenHidden) {
-					processNodeVisibility(child.id, {});
+		// Add all ancestors of felt nodes to the ancestor set
+		feltNodeIds.forEach(id => {
+			let currentId = id;
+			while (currentId !== null) {
+				const parentId = allEmotionData.find(e => e.id === currentId)?.parentId;
+				if (parentId !== null && parentId !== undefined) {
+					ancestorIds.add(parentId);
+					currentId = parentId;
+				} else {
+					currentId = null;
 				}
-			});
+			}
+		});
+
+		// Add root node and its direct children
+		const rootNode = allEmotionData.find(e => e.parentId === null);
+		if (rootNode) {
+			visibleNodeIds.add(rootNode.id);
+			const directChildren = allEmotionData.filter(e => e.parentId === rootNode.id);
+			directChildren.forEach(child => visibleNodeIds.add(child.id));
 		}
-	});
+
+		// Add felt nodes and their ancestors
+		feltNodeIds.forEach(id => visibleNodeIds.add(id));
+		ancestorIds.forEach(id => visibleNodeIds.add(id));
+
+		// For each visible node, check if its children should be shown based on _childrenHidden
+		visibleNodeIds.forEach(nodeId => {
+			const node = nodes.get(nodeId);
+			if (node && !node._childrenHidden) {
+				// If children should be shown, add ALL children (not just felt ones)
+				const children = allEmotionData.filter(e => e.parentId === nodeId);
+				children.forEach(child => {
+					visibleNodeIds.add(child.id);
+
+					// If this child is also expanded, recursively process its children
+					const childNode = nodes.get(child.id);
+					if (childNode && !childNode._childrenHidden) {
+						processNodeVisibility(child.id, {});
+					}
+				});
+			}
+		});
+	} else {
+		// In filtered mode, use the saved visible nodes
+		visibleNodeIds = savedVisibleNodeIds;
+		console.log(`Using filtered set of ${visibleNodeIds.size} nodes`);
+	}
 
 	// Create new DataSets with only visible nodes and their edges
 	const visibleNodes = new vis.DataSet();
@@ -1235,11 +1245,13 @@ function toggleFilterMyEmotions() {
 // Filters the network to show only nodes marked as 'felt' and their ancestors
 function filterToFeltEmotions() {
 	isFiltered = true;
-	filterBtn.textContent = "Show All Emotions";
+	filterBtn.textContent = currentLanguage === 'en' ? "Show All Emotions" : "نمایش همه احساسات";
 	console.log("Filtering to show only felt emotions and ancestors...");
 
 	// Find felt nodes and their ancestors
-	const feltNodeIds = nodes.getIds({ filter: item => item._feltState === true });
+	const feltNodeIds = new Set(nodes.getIds({ filter: item => item._feltState === true }));
+	console.log(`Found ${feltNodeIds.size} felt nodes`);
+
 	const ancestorIds = new Set();
 
 	// Add all ancestors of felt nodes to the ancestor set
@@ -1255,31 +1267,20 @@ function filterToFeltEmotions() {
 			}
 		}
 	});
+	console.log(`Found ${ancestorIds.size} ancestor nodes`);
 
-	// Reset visible nodes
+	// Reset visible nodes - just felt nodes and their ancestors, no other nodes
 	visibleNodeIds = new Set([...feltNodeIds, ...ancestorIds]);
-
-	// Ensure consistency of collapsed states
-	// For each visible node, check if its children should be shown based on _childrenHidden
-	visibleNodeIds.forEach(nodeId => {
-		const node = nodes.get(nodeId);
-		if (node && !node._childrenHidden) {
-			// If children should be shown, add each child that is either felt or an ancestor
-			const children = allEmotionData.filter(e => e.parentId === nodeId);
-			children.forEach(child => {
-				if (feltNodeIds.includes(child.id) || ancestorIds.has(child.id)) {
-					visibleNodeIds.add(child.id);
-				}
-			});
-		}
-	});
+	console.log(`Total visible nodes after filtering: ${visibleNodeIds.size}`);
 
 	// Rebuild the network with visible nodes (no animation)
 	rebuildNetworkWithVisibleNodes(false);
-}// Resets the view to show all emotions, respecting initial collapse states
+}
+
+// Resets the view to show all emotions, respecting initial collapse states
 function showAllEmotions() {
 	isFiltered = false;
-	filterBtn.textContent = "Show My Emotions";
+	filterBtn.textContent = currentLanguage === 'en' ? "Show My Emotions" : "نمایش احساسات من";
 	console.log("Showing all emotions...");
 
 	// Save current node states before rebuilding
@@ -1399,7 +1400,7 @@ function saveAllData() {
 	try {
 		localStorage.setItem('emotionMindMapData', JSON.stringify(savedData));
 		console.log('Data saved successfully');
-		
+
 		// Show feedback to user
 		saveBtn.textContent = currentLanguage === 'en' ? "Saved!" : "ذخیره شد!";
 		setTimeout(() => {
@@ -1464,7 +1465,7 @@ function downloadData() {
 	nodes.forEach(node => {
 		// Get the base label without the notes indicator
 		const baseLabel = node.label.replace(' 📝', '');
-		
+
 		dataToSave.nodes[node.id] = {
 			_feltState: node._feltState,
 			_notes: node._notes || '',
@@ -1498,10 +1499,10 @@ function handleFileUpload(event) {
 	if (!file) return;
 
 	const reader = new FileReader();
-	reader.onload = function(e) {
+	reader.onload = function (e) {
 		try {
 			const uploadedData = JSON.parse(e.target.result);
-			
+
 			// Validate the uploaded data structure
 			if (!uploadedData.nodes || typeof uploadedData.nodes !== 'object') {
 				throw new Error('Invalid data format');
@@ -1520,7 +1521,7 @@ function handleFileUpload(event) {
 				if (savedState) {
 					// Get the base label from the saved state
 					const baseLabel = savedState.label || node.label.replace(' 📝', '');
-					
+
 					nodesToUpdate.push({
 						id: node.id,
 						_feltState: savedState._feltState,
@@ -1535,10 +1536,10 @@ function handleFileUpload(event) {
 				nodes.update(nodesToUpdate);
 				applyAllNodeStyles();
 				rebuildNetworkWithVisibleNodes(false);
-				
+
 				// Show success message
-				alert(currentLanguage === 'en' ? 
-					'Data uploaded successfully!' : 
+				alert(currentLanguage === 'en' ?
+					'Data uploaded successfully!' :
 					'داده‌ها با موفقیت آپلود شدند!');
 			}
 
@@ -1547,13 +1548,13 @@ function handleFileUpload(event) {
 
 		} catch (error) {
 			console.error('Error processing uploaded file:', error);
-			alert(currentLanguage === 'en' ? 
-				'Error processing uploaded file. Please make sure it is a valid emotion mindmap data file.' : 
+			alert(currentLanguage === 'en' ?
+				'Error processing uploaded file. Please make sure it is a valid emotion mindmap data file.' :
 				'خطا در پردازش فایل آپلود شده. لطفاً مطمئن شوید که فایل معتبر است.');
 		}
 	};
 	reader.readAsText(file);
-	
+
 	// Reset the file input
 	event.target.value = '';
 }
@@ -1561,10 +1562,10 @@ function handleFileUpload(event) {
 // Resets all data to initial state
 function resetAllData() {
 	// Confirm with user
-	const confirmMessage = currentLanguage === 'en' ? 
+	const confirmMessage = currentLanguage === 'en' ?
 		'Are you sure you want to reset all data? This will clear all your notes and emotion states.' :
 		'آیا مطمئن هستید که می‌خواهید همه داده‌ها را بازنشانی کنید؟ این کار تمام یادداشت‌ها و وضعیت احساسات شما را پاک خواهد کرد.';
-	
+
 	if (!confirm(confirmMessage)) {
 		return;
 	}
@@ -1572,7 +1573,7 @@ function resetAllData() {
 	try {
 		// Clear localStorage
 		localStorage.removeItem('emotionMindMapData');
-		
+
 		// Reset all node states
 		const nodesToUpdate = [];
 		nodes.forEach(node => {
@@ -1600,14 +1601,14 @@ function resetAllData() {
 		hidePanel();
 
 		// Show success message
-		alert(currentLanguage === 'en' ? 
-			'All data has been reset successfully!' : 
+		alert(currentLanguage === 'en' ?
+			'All data has been reset successfully!' :
 			'همه داده‌ها با موفقیت بازنشانی شدند!');
 
 	} catch (error) {
 		console.error('Error resetting data:', error);
-		alert(currentLanguage === 'en' ? 
-			'Error resetting data. Please try again.' : 
+		alert(currentLanguage === 'en' ?
+			'Error resetting data. Please try again.' :
 			'خطا در بازنشانی داده‌ها. لطفاً دوباره تلاش کنید.');
 	}
 }
