@@ -1453,10 +1453,14 @@ function downloadData() {
 
 	// Save each node's state
 	nodes.forEach(node => {
+		// Get the base label without the notes indicator
+		const baseLabel = node.label.replace(' 📝', '');
+		
 		dataToSave.nodes[node.id] = {
 			_feltState: node._feltState,
-			_notes: node._notes,
-			_childrenHidden: node._childrenHidden
+			_notes: node._notes || '',
+			_childrenHidden: node._childrenHidden,
+			label: baseLabel // Store the base label without the notes indicator
 		};
 	});
 
@@ -1505,12 +1509,15 @@ function handleFileUpload(event) {
 			nodes.forEach(node => {
 				const savedState = uploadedData.nodes[node.id];
 				if (savedState) {
+					// Get the base label from the saved state
+					const baseLabel = savedState.label || node.label.replace(' 📝', '');
+					
 					nodesToUpdate.push({
 						id: node.id,
 						_feltState: savedState._feltState,
-						_notes: savedState._notes,
+						_notes: savedState._notes || '',
 						_childrenHidden: savedState._childrenHidden,
-						label: node.label.replace(' 📝', '') + (savedState._notes ? ' 📝' : '')
+						label: baseLabel + (savedState._notes ? ' 📝' : '') // Add notes indicator if there are notes
 					});
 				}
 			});
