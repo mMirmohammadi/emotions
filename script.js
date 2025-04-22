@@ -419,9 +419,6 @@ function setupEventListeners() {
 	downloadBtn.textContent = currentLanguage === 'en' ? 'Download Data' : 'دانلود داده‌ها';
 	downloadBtn.addEventListener('click', downloadData);
 
-	uploadBtn.textContent = currentLanguage === 'en' ? 'Upload Data' : 'آپلود داده‌ها';
-	uploadBtn.addEventListener('click', () => document.getElementById('file-input').click());
-
 	// Create hidden file input for upload
 	const fileInput = document.createElement('input');
 	fileInput.id = 'file-input';
@@ -430,6 +427,12 @@ function setupEventListeners() {
 	fileInput.style.display = 'none';
 	fileInput.addEventListener('change', handleFileUpload);
 	document.body.appendChild(fileInput);
+
+	// Handle upload button click
+	uploadBtn.textContent = currentLanguage === 'en' ? 'Upload Data' : 'آپلود داده‌ها';
+	uploadBtn.addEventListener('click', () => {
+		fileInput.click();
+	});
 
 	// Handle keyboard navigation in tour mode
 	document.addEventListener('keydown', function (event) {
@@ -1612,9 +1615,7 @@ function resetAllData() {
 // Initialize the application
 async function init() {
 	await loadEmotionData();
-	buildDataSets();
 	loadSavedData(); // Load saved data after building initial datasets
-	setupEventListeners();
 	updateUILanguage(false);
 	updateResetInstructions();
 }
