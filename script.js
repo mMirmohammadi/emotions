@@ -604,6 +604,10 @@ function switchLanguage() {
 
 	// Load the translated data and update labels without recreating the network
 	updateLabelsWithNewLanguage(savedNodeStates, savedVisibleNodeIds, cameraPosition, previousSelectedNodeId, hadPanel, wasInTourMode);
+
+	// Save the current language
+	localStorage.setItem('currentLanguage', currentLanguage);
+	document.documentElement.lang = currentLanguage;
 }
 
 // Updates all UI text elements based on the selected language
@@ -1407,15 +1411,15 @@ function saveAllData() {
 // Loads saved data from localStorage
 function loadSavedData() {
 	try {
+		const savedLanguage = localStorage.getItem('currentLanguage');
+		if (savedLanguage && savedLanguage !== currentLanguage) {
+			currentLanguage = savedLanguage;
+			updateUILanguage(false);
+			document.documentElement.lang = currentLanguage;
+		}
 		const savedData = localStorage.getItem('emotionMindMapData');
 		if (savedData) {
 			const parsedData = JSON.parse(savedData);
-			
-			// Restore language if different
-			if (parsedData.language && parsedData.language !== currentLanguage) {
-				currentLanguage = parsedData.language;
-				updateUILanguage(false);
-			}
 
 			// Restore node states
 			if (parsedData.nodes) {
@@ -1610,7 +1614,6 @@ async function init() {
 	await loadEmotionData();
 	buildDataSets();
 	loadSavedData(); // Load saved data after building initial datasets
-	createNetwork();
 	setupEventListeners();
 	updateUILanguage(false);
 	updateResetInstructions();
