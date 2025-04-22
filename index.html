@@ -8,42 +8,64 @@
 	<link rel="stylesheet" href="style.css">
 	<!-- Include vis.js library -->
 	<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+	<!-- Add Font Awesome for icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
-	<h1>Emotion Mind Map</h1>
+	<header class="app-header">
+		<h1>Emotion Mind Map</h1>
+	</header>
+
 	<div class="controls">
-		<button id="tour-btn">Start Guided Tour</button>
-		<button id="filter-btn">Show My Emotions</button>
-		<button id="save-btn">Save</button>
-		<button id="download-btn">Download</button>
-		<button id="upload-btn">Upload</button>
-		<button id="reset-btn">Reset</button>
-		<button id="language-btn">فارسی</button>
+		<button id="tour-btn"><i class="fa-solid fa-route"></i> Start Guided Tour</button>
+		<button id="filter-btn"><i class="fa-solid fa-filter"></i> Show My Emotions</button>
+		<button id="language-btn"><i class="fa-solid fa-language"></i> فارسی</button>
+		<button id="save-btn"><i class="fa-solid fa-save"></i> Save</button>
+		<button id="download-btn"><i class="fa-solid fa-download"></i> Download</button>
+		<button id="upload-btn"><i class="fa-solid fa-upload"></i> Upload</button>
+		<button id="reset-btn"><i class="fa-solid fa-trash"></i> Reset</button>
 	</div>
-	<div id="mindmap"></div>
+
+	<main id="mindmap"></main>
 
 	<!-- Emotion Detail Panel (Initially Hidden) -->
-	<div id="emotion-panel" class="panel hidden">
-		<button id="panel-close-btn">X</button>
+	<aside id="emotion-panel" class="panel hidden">
+		<button id="panel-close-btn"><i class="fa-solid fa-times"></i></button>
 		<h2 id="panel-title">Emotion Title</h2>
-		<p id="panel-description">Emotion description goes here.</p>
+		<div class="description-container">
+			<p id="panel-description">Emotion description goes here.</p>
+		</div>
 		<hr>
-		<div class="panel-actions">
-			<button id="panel-toggle-children-btn">Toggle Children</button>
-			<div class="feel-group">
-				<span class="feel-question">Do you feel this?</span>
-				<button id="panel-feel-yes-btn">Yes</button>
-				<button id="panel-feel-no-btn">No</button>
+		<div class="panel-content">
+			<div class="panel-actions">
+				<button id="panel-toggle-children-btn"><i class="fa-solid fa-caret-down"></i> <span>Toggle
+						Children</span></button>
+				<div class="feel-group">
+					<span class="feel-question">Do you feel this?</span>
+					<button id="panel-feel-yes-btn"><i class="fa-solid fa-check"></i> Yes</button>
+					<button id="panel-feel-no-btn"><i class="fa-solid fa-times"></i> No</button>
+				</div>
+				<button id="panel-next-btn" class="hidden"><i class="fa-solid fa-arrow-right"></i> Next Emotion</button>
 			</div>
-			<button id="panel-next-btn" class="hidden">Next Emotion</button>
+			<div class="panel-notes">
+				<label for="panel-notes-area">My Notes:</label>
+				<textarea id="panel-notes-area" rows="3" placeholder="Write your thoughts here..."></textarea>
+				<button id="panel-save-note-btn"><i class="fa-solid fa-save"></i> Save Note</button>
+			</div>
 		</div>
-		<div class="panel-notes">
-			<label for="panel-notes-area">My Notes:</label>
-			<textarea id="panel-notes-area" rows="3"></textarea>
-			<button id="panel-save-note-btn">Save Note</button>
-		</div>
+	</aside>
+
+	<div id="loading-overlay" class="hidden">
+		<div class="spinner"></div>
+		<p>Loading your emotions...</p>
 	</div>
+
+	<!-- Buy Me a Coffee button -->
+	<a href="https://buymeacoffee.com/mmirmohammad" target="_blank" rel="noopener" class="bmc-button">
+		<i class="fa-solid fa-mug-hot"></i>
+		<span>Buy me a coffee</span>
+	</a>
 
 	<script src="script.js"></script>
 </body>

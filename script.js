@@ -17,6 +17,7 @@ const saveBtn = document.getElementById('save-btn');
 const downloadBtn = document.getElementById('download-btn');
 const uploadBtn = document.getElementById('upload-btn');
 const resetBtn = document.getElementById('reset-btn');
+const loadingOverlay = document.getElementById('loading-overlay');
 
 // --- Global State Variables ---
 let network = null;
@@ -38,8 +39,8 @@ const options = {
 		hierarchical: {
 			enabled: true,
 			levelSeparation: 150,
-			nodeSpacing: 50,
-			treeSpacing: 120,
+			nodeSpacing: 80,
+			treeSpacing: 180,
 			direction: 'LR',
 			sortMethod: 'directed',
 			edgeMinimization: true,
@@ -52,18 +53,31 @@ const options = {
 			enabled: true,
 			type: 'cubicBezier',
 			forceDirection: 'horizontal',
-			roundness: 0.4
-		}
+			roundness: 0.5
+		},
+		color: {
+			color: '#4361ee',
+			highlight: '#3f37c9',
+			hover: '#4895ef'
+		},
+		width: 1.5,
+		selectionWidth: 2
 	},
 	nodes: {
 		shape: 'box',
-		size: 16,
+		size: 18,
 		font: {
-			size: 14,
+			size: 15,
 			multi: true,
-			align: 'left'
+			align: 'left',
+			face: 'Inter, system-ui, sans-serif',
+			color: '#212529',
+			bold: {
+				color: '#3f37c9'
+			}
 		},
 		borderWidth: 1,
+		borderWidthSelected: 2,
 		shadow: false
 	},
 	physics: {
@@ -74,11 +88,21 @@ const options = {
 		hideEdgesOnDrag: false,
 		navigationButtons: false,
 		keyboard: true,
-		zoomView: true // Ensure zoom is enabled
+		zoomView: true,
+		hover: true
 	}
 };
 
 // --- Core Data & Network Functions ---
+
+// Add show/hide loading overlay functions
+function showLoading() {
+	loadingOverlay.classList.remove('hidden');
+}
+
+function hideLoading() {
+	loadingOverlay.classList.add('hidden');
+}
 
 // Calculates hierarchical levels for nodes
 function calculateLevels(nodeId, currentLevel, nodeMap, levelMap) {
@@ -104,23 +128,35 @@ function getNodeStyle(node) {
 
 	// Add selected state styling
 	if (node.id === currentSelectedNodeId) {
-		baseStyle.borderWidth = 3;
-		baseStyle.shadow = true;
-		baseStyle.shadowColor = 'rgba(0,0,0,0.3)';
-		baseStyle.shadowSize = 10;
-		baseStyle.shadowX = 0;
-		baseStyle.shadowY = 0;
+		baseStyle.borderWidth = 2;
+		baseStyle.shadow = false;
 	}
 
 	// Add state-specific styling
 	if (node._feltState === true) {
-		return { ...baseStyle, background: '#dcfadc', border: '#4caf50' }; // Felt
+		return {
+			...baseStyle,
+			background: '#dcfadc',
+			border: '#4caf50'
+		}; // Felt
 	} else if (node._feltState === false) {
-		return { ...baseStyle, background: '#f5f5f5', border: '#bdbdbd' }; // Not Felt
+		return {
+			...baseStyle,
+			background: '#f5f5f5',
+			border: '#bdbdbd'
+		}; // Not Felt
 	} else if (node._childrenHidden) {
-		return { ...baseStyle, background: '#fff', border: '#2196F3' }; // Unanswered and Collapsed
+		return {
+			...baseStyle,
+			background: '#ffffff',
+			border: '#4361ee'
+		}; // Unanswered and Collapsed
 	} else {
-		return { ...baseStyle, background: '#fff', border: '#2196F3' }; // Unanswered
+		return {
+			...baseStyle,
+			background: '#ffffff',
+			border: '#4895ef'
+		}; // Unanswered
 	}
 }
 
@@ -487,6 +523,8 @@ async function preloadTranslations() {
 
 // Fetches data and initializes the application
 async function loadEmotionData() {
+	showLoading(); // Show loading overlay when starting data load
+
 	try {
 		const dataFile = currentLanguage === 'en' ? 'emotions.json' : 'emotions_persian.json';
 		const response = await fetch(dataFile);
@@ -541,15 +579,15 @@ async function loadEmotionData() {
 		// Preload other language translations in the background
 		preloadTranslations();
 
-		// No need for delayed rebuild anymore
-		// setTimeout(() => {
-		// 	rebuildNetworkWithVisibleNodes(true);
-		// 	preloadTranslations();
-		// }, 500);
+		// after initialization, hide loading overlay with a small delay for visual effect
+		setTimeout(() => {
+			hideLoading();
+		}, 500);
 
 	} catch (error) {
 		console.error("Error loading or processing emotion data:", error);
 		if (panelDescription) { panelDescription.textContent = 'Error loading data.'; }
+		hideLoading(); // Make sure to hide loading if there's an error
 	}
 }
 
@@ -863,9 +901,13 @@ function showPanelForNode(nodeId) {
 
 		console.log(`Showing panel for node ${nodeId}, tour active: ${isTourActive}, felt state: ${nodeData._feltState}`);
 
+		// Handle tour mode
 		if (isTourActive) {
 			// In tour mode, hide toggle children and show next emotion button
 			panelToggleChildrenBtn.style.display = 'none';
+
+			// Make sure the Next button is visible in tour mode
+			panelNextBtn.style.display = '';
 			panelNextBtn.classList.remove('hidden');
 
 			// Important: In Persian version, ensure we never disable the Next button for true state
@@ -878,10 +920,11 @@ function showPanelForNode(nodeId) {
 
 			console.log(`Tour mode: Next button disabled: ${panelNextBtn.disabled}, hidden: ${panelNextBtn.classList.contains('hidden')}`);
 		} else {
-			// Not in tour mode, hide next button and show toggle children if applicable
+			// Not in tour mode, make sure next button is completely hidden
+			panelNextBtn.style.display = 'none';
 			panelNextBtn.classList.add('hidden');
-			panelNextBtn.disabled = false;
 
+			// Show toggle children if applicable
 			const children = allEmotionData.filter(e => e.parentId === nodeId);
 			panelToggleChildrenBtn.style.display = children.length > 0 ? 'inline-block' : 'none';
 
@@ -948,20 +991,28 @@ function handleFeelDecision(isFelt) {
 		newState = isFelt;
 		console.log(`Tour mode: preventing toggle to null, keeping felt state: ${newState}`);
 	} else {
-		// Normal toggle behavior
+		// Normal toggle behavior - clicking same button toggles between state and null
 		newState = (node._feltState === isFelt) ? null : isFelt;
 	}
 
 	// Update the node's felt state
+	const updatedNodeStyle = getNodeStyle({ ...node, _feltState: newState });
 	nodes.update({
 		id: currentSelectedNodeId,
 		_feltState: newState,
-		color: getNodeStyle({ ...node, _feltState: newState })
+		color: updatedNodeStyle
 	});
 
-	// Update button appearance
-	panelFeelYesBtn.classList.toggle('selected-feel', newState === true);
-	panelFeelNoBtn.classList.toggle('selected-feel', newState === false);
+	// Force update button appearance immediately
+	panelFeelYesBtn.classList.remove('selected-feel');
+	panelFeelNoBtn.classList.remove('selected-feel');
+
+	// Then toggle the correct one if needed
+	if (newState === true) {
+		panelFeelYesBtn.classList.add('selected-feel');
+	} else if (newState === false) {
+		panelFeelNoBtn.classList.add('selected-feel');
+	}
 
 	// Handle visibility changes based on felt state
 	if (newState === false && !node._childrenHidden) {
@@ -1210,9 +1261,12 @@ function endTour() {
 	tourBtn.textContent = currentLanguage === 'en' ? "Start Guided Tour" : "شروع تور راهنما";
 	tourStack = [];
 
+	// Explicitly hide the Next button
+	panelNextBtn.style.display = 'none';
+	panelNextBtn.classList.add('hidden');
+
 	// Only update UI elements without modifying node data
 	if (currentSelectedNodeId && !emotionPanel.classList.contains('hidden')) {
-		panelNextBtn.classList.add('hidden');
 		const nodeData = nodes.get(currentSelectedNodeId);
 		if (nodeData) {
 			const children = allEmotionData.filter(e => e.parentId === currentSelectedNodeId);
@@ -1616,6 +1670,14 @@ function resetAllData() {
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', init);
 
+// Add this line to explicitly hide the Next button on page load
+document.addEventListener('DOMContentLoaded', function () {
+	const panelNextBtn = document.getElementById('panel-next-btn');
+	if (panelNextBtn) {
+		panelNextBtn.classList.add('hidden');
+	}
+});
+
 // Function to set an emoji as favicon
 function setEmojiFavicon(emoji) {
 	const canvas = document.createElement('canvas');
@@ -1638,6 +1700,8 @@ function setEmojiFavicon(emoji) {
 async function init() {
 	// Set emoji favicon (using a heart emoji for emotions map)
 	setEmojiFavicon('❤️');
+
+	showLoading(); // Show loading when initializing
 
 	await loadEmotionData();
 	loadSavedData(); // Load saved data after building initial datasets
