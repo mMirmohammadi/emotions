@@ -278,16 +278,56 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 		}
 	}
 
-	// Save current visible node IDs
-	if (visibleNodeIds.size === 0) {
-		// Initialize with root node and its children if empty
-		const rootNode = allEmotionData.find(e => e.parentId === null);
-		if (rootNode) {
-			visibleNodeIds.add(rootNode.id);
-			const directChildren = allEmotionData.filter(e => e.parentId === rootNode.id);
-			directChildren.forEach(child => visibleNodeIds.add(child.id));
+	// Reset visible nodes
+	visibleNodeIds = new Set();
+
+	// Find all felt nodes and their ancestors
+	const feltNodeIds = nodes.getIds({ filter: item => item._feltState === true });
+	const ancestorIds = new Set();
+
+	// Add all ancestors of felt nodes to the ancestor set
+	feltNodeIds.forEach(id => {
+		let currentId = id;
+		while (currentId !== null) {
+			const parentId = allEmotionData.find(e => e.id === currentId)?.parentId;
+			if (parentId !== null && parentId !== undefined) {
+				ancestorIds.add(parentId);
+				currentId = parentId;
+			} else {
+				currentId = null;
+			}
 		}
+	});
+
+	// Add root node and its direct children
+	const rootNode = allEmotionData.find(e => e.parentId === null);
+	if (rootNode) {
+		visibleNodeIds.add(rootNode.id);
+		const directChildren = allEmotionData.filter(e => e.parentId === rootNode.id);
+		directChildren.forEach(child => visibleNodeIds.add(child.id));
 	}
+
+	// Add felt nodes and their ancestors
+	feltNodeIds.forEach(id => visibleNodeIds.add(id));
+	ancestorIds.forEach(id => visibleNodeIds.add(id));
+
+	// For each visible node, check if its children should be shown based on _childrenHidden
+	visibleNodeIds.forEach(nodeId => {
+		const node = nodes.get(nodeId);
+		if (node && !node._childrenHidden) {
+			// If children should be shown, add ALL children (not just felt ones)
+			const children = allEmotionData.filter(e => e.parentId === nodeId);
+			children.forEach(child => {
+				visibleNodeIds.add(child.id);
+				
+				// If this child is also expanded, recursively process its children
+				const childNode = nodes.get(child.id);
+				if (childNode && !childNode._childrenHidden) {
+					processNodeVisibility(child.id, {});
+				}
+			});
+		}
+	});
 
 	// Create new DataSets with only visible nodes and their edges
 	const visibleNodes = new vis.DataSet();
@@ -311,8 +351,6 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 
 	// Destroy old network and create new one
 	const networkContainer = network.body.container;
-	const currentScale = network.getScale();
-	const currentViewPosition = network.getViewPosition();
 	network.destroy();
 
 	// Create new network with visible nodes only
@@ -321,23 +359,20 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 	// Reattach event listeners
 	network.on("click", handleNetworkClick);
 	network.on("doubleClick", handleNodeDoubleClick);
-	network.on("stabilized", function () {
-		console.log("Rebuilt network stabilized");
-		// Apply styles after stabilization to ensure selection is visible
-		applyAllNodeStyles();
 
-		// Force an extra redraw for good measure
-		network.redraw();
+	// Apply styles after stabilization
+	network.on("stabilized", function () {
+		applyAllNodeStyles();
 	});
 
-	// Apply selection styles immediately - don't wait for stabilization
+	// Apply styles immediately
 	applyAllNodeStyles();
 
 	// Focus back on the previously selected node
 	if (selectedNodeId && visibleNodeIds.has(selectedNodeId)) {
 		network.focus(selectedNodeId, {
-			scale: currentScale,
-			animation: false
+			scale: 1.0,
+			animation: useAnimation
 		});
 
 		// Restore the network selection state
@@ -345,35 +380,14 @@ function rebuildNetworkWithVisibleNodes(useAnimation = false) {
 
 		// Reopen the panel if it was open before
 		if (wasPanelOpen) {
-			console.log(`Refocusing on node ${selectedNodeId} and reopening panel`);
 			showPanelForNode(selectedNodeId);
-
-			// Apply styles again after showing panel to ensure selection is visible
-			applyAllNodeStyles();
 		}
 	} else {
-		// If there's no selected node, just restore the previous view
-		if (currentViewPosition) {
-			network.moveTo({
-				position: currentViewPosition,
-				scale: currentScale,
-				animation: false
-			});
-		} else {
-			// Or fit the view if no position was saved
-			console.log("Fitting network to view (no selected node)");
-			network.fit({
-				animation: false
-			});
-		}
+		// If no selected node, fit the view to all visible nodes
+		network.fit({
+			animation: useAnimation
+		});
 	}
-
-	// Force one additional redraw to ensure labels are updated
-	setTimeout(() => {
-		if (network) {
-			network.redraw();
-		}
-	}, 100);
 }
 
 // Sets up all event listeners for the network and UI elements
