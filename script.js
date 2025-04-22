@@ -13,6 +13,10 @@ const panelNextBtn = document.getElementById('panel-next-btn');
 const tourBtn = document.getElementById('tour-btn');
 const filterBtn = document.getElementById('filter-btn');
 const languageBtn = document.getElementById('language-btn');
+const saveBtn = document.getElementById('save-btn');
+const downloadBtn = document.getElementById('download-btn');
+const uploadBtn = document.getElementById('upload-btn');
+const resetBtn = document.getElementById('reset-btn');
 
 // --- Global State Variables ---
 let network = null;
@@ -394,6 +398,25 @@ function setupEventListeners() {
 	filterBtn.addEventListener('click', toggleFilterMyEmotions);
 	languageBtn.addEventListener('click', switchLanguage);
 
+	// Handle save, download and upload button text and events
+	saveBtn.textContent = currentLanguage === 'en' ? 'Save Data' : 'ذخیره داده‌ها';
+	saveBtn.addEventListener('click', saveAllData);
+
+	downloadBtn.textContent = currentLanguage === 'en' ? 'Download Data' : 'دانلود داده‌ها';
+	downloadBtn.addEventListener('click', downloadData);
+
+	uploadBtn.textContent = currentLanguage === 'en' ? 'Upload Data' : 'آپلود داده‌ها';
+	uploadBtn.addEventListener('click', () => document.getElementById('file-input').click());
+
+	// Create hidden file input for upload
+	const fileInput = document.createElement('input');
+	fileInput.id = 'file-input';
+	fileInput.type = 'file';
+	fileInput.accept = '.json';
+	fileInput.style.display = 'none';
+	fileInput.addEventListener('change', handleFileUpload);
+	document.body.appendChild(fileInput);
+
 	// Handle keyboard navigation in tour mode
 	document.addEventListener('keydown', function (event) {
 		if (isTourActive && event.code === 'Space') {
@@ -408,6 +431,10 @@ function setupEventListeners() {
 			}
 		}
 	});
+
+	// Add reset button
+	resetBtn.textContent = currentLanguage === 'en' ? 'Reset' : 'بازنشانی';
+	resetBtn.addEventListener('click', resetAllData);
 }
 
 // Preload translations for better performance
@@ -1329,8 +1356,244 @@ function buildDataSetsWithSavedStates(savedStates = {}) {
 	applyAllNodeStyles();
 }
 
+// Saves all node states and notes to localStorage
+function saveAllData() {
+	const savedData = {
+		nodes: {},
+		language: currentLanguage
+	};
+
+	// Save each node's state
+	nodes.forEach(node => {
+		savedData.nodes[node.id] = {
+			_feltState: node._feltState,
+			_notes: node._notes,
+			_childrenHidden: node._childrenHidden
+		};
+	});
+
+	// Save to localStorage
+	try {
+		localStorage.setItem('emotionMindMapData', JSON.stringify(savedData));
+		console.log('Data saved successfully');
+		
+		// Show feedback to user
+		saveBtn.textContent = currentLanguage === 'en' ? "Saved!" : "ذخیره شد!";
+		setTimeout(() => {
+			saveBtn.textContent = currentLanguage === 'en' ? "Save" : "ذخیره";
+		}, 1500);
+	} catch (error) {
+		console.error('Error saving data:', error);
+		alert(currentLanguage === 'en' ? "Error saving data. Please try again." : "خطا در ذخیره داده‌ها. لطفاً دوباره تلاش کنید.");
+	}
+}
+
+// Loads saved data from localStorage
+function loadSavedData() {
+	try {
+		const savedData = localStorage.getItem('emotionMindMapData');
+		if (savedData) {
+			const parsedData = JSON.parse(savedData);
+			
+			// Restore language if different
+			if (parsedData.language && parsedData.language !== currentLanguage) {
+				currentLanguage = parsedData.language;
+				updateUILanguage(false);
+			}
+
+			// Restore node states
+			if (parsedData.nodes) {
+				const nodesToUpdate = [];
+				nodes.forEach(node => {
+					const savedState = parsedData.nodes[node.id];
+					if (savedState) {
+						nodesToUpdate.push({
+							id: node.id,
+							_feltState: savedState._feltState,
+							_notes: savedState._notes,
+							_childrenHidden: savedState._childrenHidden,
+							label: node.label.replace(' 📝', '') + (savedState._notes ? ' 📝' : '')
+						});
+					}
+				});
+
+				if (nodesToUpdate.length > 0) {
+					nodes.update(nodesToUpdate);
+					applyAllNodeStyles();
+					rebuildNetworkWithVisibleNodes(false);
+				}
+			}
+		}
+	} catch (error) {
+		console.error('Error loading saved data:', error);
+	}
+}
+
+// Downloads the current data as a JSON file
+function downloadData() {
+	const dataToSave = {
+		nodes: {},
+		language: currentLanguage,
+		timestamp: new Date().toISOString()
+	};
+
+	// Save each node's state
+	nodes.forEach(node => {
+		dataToSave.nodes[node.id] = {
+			_feltState: node._feltState,
+			_notes: node._notes,
+			_childrenHidden: node._childrenHidden
+		};
+	});
+
+	// Create and trigger download
+	const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `emotion-mindmap-data-${new Date().toISOString().split('T')[0]}.json`;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+	URL.revokeObjectURL(url);
+
+	// Show feedback
+	const downloadBtn = document.getElementById('download-btn');
+	downloadBtn.textContent = currentLanguage === 'en' ? 'Downloaded!' : 'دانلود شد!';
+	setTimeout(() => {
+		downloadBtn.textContent = currentLanguage === 'en' ? 'Download Data' : 'دانلود داده‌ها';
+	}, 1500);
+}
+
+// Handles file upload and data restoration
+function handleFileUpload(event) {
+	const file = event.target.files[0];
+	if (!file) return;
+
+	const reader = new FileReader();
+	reader.onload = function(e) {
+		try {
+			const uploadedData = JSON.parse(e.target.result);
+			
+			// Validate the uploaded data structure
+			if (!uploadedData.nodes || typeof uploadedData.nodes !== 'object') {
+				throw new Error('Invalid data format');
+			}
+
+			// Restore language if different
+			if (uploadedData.language && uploadedData.language !== currentLanguage) {
+				currentLanguage = uploadedData.language;
+				updateUILanguage(false);
+			}
+
+			// Restore node states
+			const nodesToUpdate = [];
+			nodes.forEach(node => {
+				const savedState = uploadedData.nodes[node.id];
+				if (savedState) {
+					nodesToUpdate.push({
+						id: node.id,
+						_feltState: savedState._feltState,
+						_notes: savedState._notes,
+						_childrenHidden: savedState._childrenHidden,
+						label: node.label.replace(' 📝', '') + (savedState._notes ? ' 📝' : '')
+					});
+				}
+			});
+
+			if (nodesToUpdate.length > 0) {
+				nodes.update(nodesToUpdate);
+				applyAllNodeStyles();
+				rebuildNetworkWithVisibleNodes(false);
+				
+				// Show success message
+				alert(currentLanguage === 'en' ? 
+					'Data uploaded successfully!' : 
+					'داده‌ها با موفقیت آپلود شدند!');
+			}
+
+			// Save to localStorage as well
+			localStorage.setItem('emotionMindMapData', JSON.stringify(uploadedData));
+
+		} catch (error) {
+			console.error('Error processing uploaded file:', error);
+			alert(currentLanguage === 'en' ? 
+				'Error processing uploaded file. Please make sure it is a valid emotion mindmap data file.' : 
+				'خطا در پردازش فایل آپلود شده. لطفاً مطمئن شوید که فایل معتبر است.');
+		}
+	};
+	reader.readAsText(file);
+	
+	// Reset the file input
+	event.target.value = '';
+}
+
+// Resets all data to initial state
+function resetAllData() {
+	// Confirm with user
+	const confirmMessage = currentLanguage === 'en' ? 
+		'Are you sure you want to reset all data? This will clear all your notes and emotion states.' :
+		'آیا مطمئن هستید که می‌خواهید همه داده‌ها را بازنشانی کنید؟ این کار تمام یادداشت‌ها و وضعیت احساسات شما را پاک خواهد کرد.';
+	
+	if (!confirm(confirmMessage)) {
+		return;
+	}
+
+	try {
+		// Clear localStorage
+		localStorage.removeItem('emotionMindMapData');
+		
+		// Reset all node states
+		const nodesToUpdate = [];
+		nodes.forEach(node => {
+			nodesToUpdate.push({
+				id: node.id,
+				_feltState: null,
+				_notes: '',
+				_childrenHidden: node.parentId !== null,
+				label: node.label.replace(' 📝', '')
+			});
+		});
+
+		if (nodesToUpdate.length > 0) {
+			nodes.update(nodesToUpdate);
+			applyAllNodeStyles();
+			rebuildNetworkWithVisibleNodes(false);
+		}
+
+		// Reset other states
+		isFiltered = false;
+		filterBtn.textContent = currentLanguage === 'en' ? 'Show My Emotions' : 'نمایش احساسات من';
+		isTourActive = false;
+		tourBtn.textContent = currentLanguage === 'en' ? 'Start Guided Tour' : 'شروع تور راهنما';
+		currentSelectedNodeId = null;
+		hidePanel();
+
+		// Show success message
+		alert(currentLanguage === 'en' ? 
+			'All data has been reset successfully!' : 
+			'همه داده‌ها با موفقیت بازنشانی شدند!');
+
+	} catch (error) {
+		console.error('Error resetting data:', error);
+		alert(currentLanguage === 'en' ? 
+			'Error resetting data. Please try again.' : 
+			'خطا در بازنشانی داده‌ها. لطفاً دوباره تلاش کنید.');
+	}
+}
+
+// Initialize the application
+async function init() {
+	await loadEmotionData();
+	buildDataSets();
+	loadSavedData(); // Load saved data after building initial datasets
+	createNetwork();
+	setupEventListeners();
+	updateUILanguage(false);
+	updateResetInstructions();
+}
 
 // --- Initialization ---
-document.addEventListener('DOMContentLoaded', loadEmotionData);
+document.addEventListener('DOMContentLoaded', init);
 
 

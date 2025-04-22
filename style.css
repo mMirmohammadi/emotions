@@ -220,6 +220,17 @@ button:disabled {
 	border-color: #0056b3;
 }
 
+#reset-btn {
+	background-color: #dc3545;
+	color: white;
+	border-color: #dc3545;
+}
+
+#reset-btn:hover {
+	background-color: #c82333;
+	border-color: #bd2130;
+}
+
 /* Highlight for selected feel button */
 .panel-actions button.selected-feel {
 	background-color: #6c757d;
