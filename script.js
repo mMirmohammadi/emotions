@@ -38,8 +38,8 @@ const options = {
 		hierarchical: {
 			enabled: true,
 			levelSeparation: 150,
-			nodeSpacing: 120,
-			treeSpacing: 150,
+			nodeSpacing: 50,
+			treeSpacing: 120,
 			direction: 'LR',
 			sortMethod: 'directed',
 			edgeMinimization: true,
