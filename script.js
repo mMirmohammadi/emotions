@@ -626,6 +626,10 @@ function updateUILanguage(wasInTourMode) {
 		document.querySelector('label[for="panel-notes-area"]').textContent = 'My Notes:';
 		panelSaveNoteBtn.textContent = 'Save Note';
 		panelNextBtn.textContent = 'Next Emotion';
+		saveBtn.textContent = 'Save Data';
+		downloadBtn.textContent = 'Download Data';
+		uploadBtn.textContent = 'Upload Data';
+		resetBtn.textContent = 'Reset';
 	} else {
 		languageBtn.textContent = 'English';
 		document.documentElement.lang = 'fa';
@@ -638,6 +642,10 @@ function updateUILanguage(wasInTourMode) {
 		document.querySelector('label[for="panel-notes-area"]').textContent = 'یادداشت‌های من:';
 		panelSaveNoteBtn.textContent = 'ذخیره یادداشت';
 		panelNextBtn.textContent = 'احساس بعدی';
+		saveBtn.textContent = 'ذخیره داده‌ها';
+		downloadBtn.textContent = 'دانلود داده‌ها';
+		uploadBtn.textContent = 'آپلود داده‌ها';
+		resetBtn.textContent = 'بازنشانی';
 	}
 
 	// Update reset instructions
