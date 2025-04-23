@@ -19,6 +19,17 @@ const uploadBtn = document.getElementById('upload-btn');
 const resetBtn = document.getElementById('reset-btn');
 const loadingOverlay = document.getElementById('loading-overlay');
 
+// --- Helper Functions ---
+// Detect if device is mobile
+function isMobileDevice() {
+	return (
+		window.innerWidth <= 768 ||
+		navigator.maxTouchPoints > 0 ||
+		navigator.msMaxTouchPoints > 0 ||
+		/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+	);
+}
+
 // --- Global State Variables ---
 let network = null;
 let nodes = new vis.DataSet();
@@ -40,7 +51,7 @@ const options = {
 			enabled: true,
 			levelSeparation: 150,
 			nodeSpacing: 80,
-			treeSpacing: 180,
+			treeSpacing: isMobileDevice() ? 100 : 180,
 			direction: 'LR',
 			sortMethod: 'directed',
 			edgeMinimization: true,
@@ -65,9 +76,9 @@ const options = {
 	},
 	nodes: {
 		shape: 'box',
-		size: 18,
+		size: isMobileDevice() ? 14 : 18,
 		font: {
-			size: 15,
+			size: isMobileDevice() ? 12 : 15,
 			multi: true,
 			align: 'left',
 			face: 'Inter, system-ui, sans-serif',
@@ -87,13 +98,47 @@ const options = {
 		tooltipDelay: 200,
 		hideEdgesOnDrag: false,
 		navigationButtons: false,
-		keyboard: true,
+		keyboard: !isMobileDevice(),
 		zoomView: true,
-		hover: true
+		hover: !isMobileDevice(),
+		multiselect: false,
+		dragNodes: true,
+		dragView: true
 	}
 };
 
 // --- Core Data & Network Functions ---
+
+// Handle touch events for pinch-to-zoom
+let touchStartDistance = 0;
+let touchStartScale = 0;
+
+function handleTouchStart(event) {
+	if (event.touches.length === 2) {
+		touchStartDistance = Math.hypot(
+			event.touches[0].pageX - event.touches[1].pageX,
+			event.touches[0].pageY - event.touches[1].pageY
+		);
+		touchStartScale = network.getScale();
+	}
+}
+
+function handleTouchMove(event) {
+	if (event.touches.length === 2) {
+		// Prevent default behavior (page scroll) when pinch zooming
+		event.preventDefault();
+
+		const currentDistance = Math.hypot(
+			event.touches[0].pageX - event.touches[1].pageX,
+			event.touches[0].pageY - event.touches[1].pageY
+		);
+
+		if (touchStartDistance > 0) {
+			const scale = touchStartScale * (currentDistance / touchStartDistance);
+			network.moveTo({ scale: scale });
+		}
+	}
+}
 
 // Add show/hide loading overlay functions
 function showLoading() {
@@ -284,7 +329,22 @@ function getAncestorPath(nodeId) {
 // Creates the vis.js Network instance with only visible nodes
 function initializeNetwork(initialNodes, initialEdges) {
 	const data = { nodes: initialNodes, edges: initialEdges };
+
+	// If on mobile, adjust the layout direction to UD (up to down)
+	if (isMobileDevice()) {
+		console.log("Mobile device detected, adjusting layout");
+		options.layout.hierarchical.direction = 'LR'; // Keep LR direction
+		options.layout.hierarchical.levelSeparation = 120; // Less separation on mobile
+		options.layout.hierarchical.nodeSpacing = 50;
+	}
+
 	network = new vis.Network(container, data, options);
+
+	// Add pinch-to-zoom support for touch devices
+	if (isMobileDevice()) {
+		container.addEventListener('touchstart', handleTouchStart, false);
+		container.addEventListener('touchmove', handleTouchMove, false);
+	}
 
 	// Basic stabilized event logging
 	network.on("stabilized", function () {
@@ -453,6 +513,11 @@ function setupEventListeners() {
 	panelSaveNoteBtn.addEventListener('click', saveNote);
 	panelNextBtn.addEventListener('click', nextTourEmotion);
 
+	// Add swipe down to close panel for mobile
+	if (isMobileDevice()) {
+		setupPanelSwipeToClose();
+	}
+
 	// Control events
 	tourBtn.addEventListener('click', toggleTour);
 	filterBtn.addEventListener('click', toggleFilterMyEmotions);
@@ -498,6 +563,49 @@ function setupEventListeners() {
 	// Add reset button
 	resetBtn.textContent = currentLanguage === 'en' ? 'Reset' : 'بازنشانی';
 	resetBtn.addEventListener('click', resetAllData);
+}
+
+// Setup swipe down to close panel
+function setupPanelSwipeToClose() {
+	let startY = 0;
+	let startTime = 0;
+
+	emotionPanel.addEventListener('touchstart', function (e) {
+		startY = e.touches[0].clientY;
+		startTime = Date.now();
+	}, false);
+
+	emotionPanel.addEventListener('touchmove', function (e) {
+		const currentY = e.touches[0].clientY;
+		const deltaY = currentY - startY;
+
+		// If swiping down
+		if (deltaY > 0) {
+			// Prevent default only when dragging the panel itself
+			if (e.target === panelTitle || e.target === panelCloseBtn ||
+				e.target === emotionPanel.querySelector('h3')) {
+				e.preventDefault();
+				emotionPanel.style.transform = `translateY(${deltaY}px)`;
+			}
+		}
+	}, false);
+
+	emotionPanel.addEventListener('touchend', function (e) {
+		const endY = e.changedTouches[0].clientY;
+		const deltaY = endY - startY;
+		const deltaTime = Date.now() - startTime;
+
+		// Reset transform immediately
+		emotionPanel.style.transform = '';
+
+		// If swiped down far enough or quickly enough
+		if (deltaY > 100 || (deltaY > 50 && deltaTime < 300)) {
+			hidePanel();
+			if (isTourActive) {
+				endTour();
+			}
+		}
+	}, false);
 }
 
 // Preload translations for better performance
@@ -593,19 +701,10 @@ async function loadEmotionData() {
 
 // Adds or updates reset instructions with appropriate language
 function updateResetInstructions() {
-	let instructionsDiv = document.getElementById('reset-instructions');
-
-	if (!instructionsDiv) {
-		instructionsDiv = document.createElement('div');
-		instructionsDiv.id = 'reset-instructions';
-		instructionsDiv.style.position = 'fixed';
-		instructionsDiv.style.bottom = '10px';
-		instructionsDiv.style.left = '10px';
-		instructionsDiv.style.background = 'rgba(255, 255, 255, 0.8)';
-		instructionsDiv.style.padding = '5px 10px';
-		instructionsDiv.style.borderRadius = '5px';
-		instructionsDiv.style.fontSize = '12px';
-		document.body.appendChild(instructionsDiv);
+	// Remove any existing reset instructions
+	const existingInstructions = document.getElementById('reset-instructions');
+	if (existingInstructions) {
+		existingInstructions.remove();
 	}
 }
 
@@ -1701,12 +1800,104 @@ async function init() {
 	// Set emoji favicon (using a heart emoji for emotions map)
 	setEmojiFavicon('❤️');
 
+	// Check if mobile device and add necessary meta tag if needed
+	if (isMobileDevice()) {
+		console.log("Mobile device detected, adding mobile optimizations");
+		addMobileOptimizations();
+	}
+
 	showLoading(); // Show loading when initializing
 
 	await loadEmotionData();
 	loadSavedData(); // Load saved data after building initial datasets
 	updateUILanguage(false);
 	updateResetInstructions();
+
+	// Add resize handler to adapt layout when orientation changes
+	window.addEventListener('resize', handleWindowResize);
+}
+
+// Add mobile-specific optimizations
+function addMobileOptimizations() {
+	// Ensure viewport meta tag exists
+	if (!document.querySelector('meta[name="viewport"]')) {
+		const meta = document.createElement('meta');
+		meta.name = 'viewport';
+		meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+		document.getElementsByTagName('head')[0].appendChild(meta);
+	}
+
+	// Apply mobile-specific CSS
+	const style = document.createElement('style');
+	style.textContent = `
+		@media (max-width: 768px) {
+			#mindmap {
+				height: 70vh !important;
+			}
+			#emotion-panel {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				top: auto;
+				max-height: 60vh;
+				width: 100%;
+				border-radius: 12px 12px 0 0;
+				box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+				overflow-y: auto;
+			}
+			.control-buttons {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 5px;
+				margin-top: 40px; /* Add space to avoid covering logo */
+			}
+			.control-buttons button {
+				padding: 8px 10px !important;
+				font-size: 12px !important;
+				margin: 3px !important;
+			}
+			h1 {
+				font-size: 1.5rem !important;
+				margin: 10px 0 !important;
+			}
+			.panel-feel-options, .panel-actions {
+				flex-direction: row !important;
+				justify-content: space-between !important;
+			}
+		}
+		
+		/* For all screen sizes */
+		#emotion-panel {
+			max-width: 500px;
+			margin: 0 auto;
+			left: 0;
+			right: 0;
+		}
+	`;
+	document.getElementsByTagName('head')[0].appendChild(style);
+}
+
+// Handle window resize events
+function handleWindowResize() {
+	if (network) {
+		const isMobile = isMobileDevice();
+
+		// Update mobile-specific options
+		if (isMobile) {
+			options.layout.hierarchical.levelSeparation = 120;
+			options.layout.hierarchical.nodeSpacing = 50;
+			options.layout.hierarchical.treeSpacing = 100;
+		} else {
+			options.layout.hierarchical.levelSeparation = 150;
+			options.layout.hierarchical.nodeSpacing = 80;
+			options.layout.hierarchical.treeSpacing = 180;
+		}
+
+		// Force rebuild
+		rebuildNetworkWithVisibleNodes(false);
+	}
 }
 
 
